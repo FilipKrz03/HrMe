@@ -12,23 +12,24 @@ using System.Threading.Tasks;
 
 namespace Application.Company.Command.CreateCompany
 {
-    public class CreateCompanyHandler : IRequestHandler<CreateCompanyCommand, CompanyResponse>
+    public class CreateCompanyHandler : IRequestHandler<CreateCompanyCommand, CompanyResponse?>
     {
         private readonly HrMeContext _context;
         private readonly IMapper _mapper;
+
         public CreateCompanyHandler(HrMeContext context, IMapper mapper)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
-        public async Task<CompanyResponse> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
-        {
-            var account =
-                await _context.Companies
-                .Where(company => company.Email == request.Email)
-                .FirstOrDefaultAsync(cancellationToken);
 
-            if (account == null)
+        public async Task<CompanyResponse?> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
+        {
+            var accountExist =
+                await _context.Companies
+                .AnyAsync(company => company.Email == request.Email);
+
+            if (accountExist == false)
             {
                 string hashedPwd = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
@@ -40,12 +41,12 @@ namespace Application.Company.Command.CreateCompany
                 };
                 _context.Companies.Add(company);
 
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellationToken);
 
                 var companyResponse = _mapper.Map<CompanyResponse>(company);
                 return companyResponse;
             }
-            return null!;
+            return null;
         }
     }
 }

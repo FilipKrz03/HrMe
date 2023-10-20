@@ -19,17 +19,10 @@ namespace Web.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterCompany(CreateCompanyCommand command)
         {
-            if(command == null)
-            {
-                return BadRequest();
-            }
-
             var result = await _mediator.Send(command);
 
-            if (result == null)
-                return StatusCode(409, $"Company with email {command.Email} already exists");
-
-            return StatusCode(201, "Company created");
+            return result == null ? StatusCode(409, $"Company with email {command.Email} already exists") :
+                 StatusCode(201, "Company created");
         }
     }
 }

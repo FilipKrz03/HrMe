@@ -1,4 +1,5 @@
 ﻿using Application;
+using FluentValidation;
 using Infrastructure;
 using System.Reflection;
 
@@ -17,13 +18,15 @@ namespace Web
 
             builder.Services.AddAplication();
             builder.Services.AddInfrastucture();
-            
+
+            ValidatorOptions.Global.LanguageManager.Enabled = false;
+
             return builder.Build();
         }
 
         public static WebApplication ConfigurePipeline(this WebApplication app)
         {
-            if(app.Environment.IsDevelopment())
+            if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
@@ -31,6 +34,8 @@ namespace Web
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+            app.UseMiddlewareAplication();
 
             app.MapControllers();
 
