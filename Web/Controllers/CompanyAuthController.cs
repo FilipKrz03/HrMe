@@ -1,18 +1,21 @@
-﻿using Application.Company.Command.CreateCompany;
-using Application.Company.Command.LoginCompany;
+﻿using Application.CQRS.Company.Command.CreateCompany;
+using Application.CQRS.Company.Command.LoginCompany;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace Web.Controllers
 {
-    [Route("api/authentication")]
+    [Route("api/company/authentication")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class CompanyAuthController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public AuthController(IMediator mediator)
+        public CompanyAuthController(IMediator mediator)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
@@ -33,6 +36,6 @@ namespace Web.Controllers
 
             return result == null ? Unauthorized("Check email or password") :
                 Ok(result);
-        }
+        }  
     }
 }

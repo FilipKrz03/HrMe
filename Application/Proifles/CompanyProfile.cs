@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Application.Company.Response;
+using Application.CQRS.Company.Response;
 
 namespace Application.Proifles
 {

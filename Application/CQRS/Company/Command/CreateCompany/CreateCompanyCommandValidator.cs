@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
 
-namespace Application.Company.Command.CreateCompany
+namespace Application.CQRS.Company.Command.CreateCompany
 {
     public class CreateCompanyCommandValidator : AbstractValidator<CreateCompanyCommand>
     {

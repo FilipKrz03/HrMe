@@ -1,4 +1,4 @@
-﻿using Application.Company.Response;
+﻿using Application.CQRS.Company.Response;
 using AutoMapper;
 using Domain.Entities;
 using Infrastructure;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Company.Command.CreateCompany
+namespace Application.CQRS.Company.Command.CreateCompany
 {
     public class CreateCompanyHandler : IRequestHandler<CreateCompanyCommand, CompanyResponse?>
     {

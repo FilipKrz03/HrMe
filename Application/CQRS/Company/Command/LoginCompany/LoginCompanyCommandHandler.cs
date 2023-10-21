@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Company.Command.LoginCompany
+namespace Application.CQRS.Company.Command.LoginCompany
 {
     public class LoginCompanyCommandHandler : IRequestHandler<LoginCompanyCommand, string?>
     {
@@ -17,7 +17,7 @@ namespace Application.Company.Command.LoginCompany
         private readonly IMapper _mapper;
         private readonly IJwtProvider _jwtProvider;
 
-        public LoginCompanyCommandHandler(HrMeContext context, IMapper mapper , 
+        public LoginCompanyCommandHandler(HrMeContext context, IMapper mapper,
             IJwtProvider jwtProvider)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Company.Command.LoginCompany
+namespace Application.CQRS.Company.Command.LoginCompany
 {
     public class LoginComapnyCommandValidator : AbstractValidator<LoginCompanyCommand>
     {
