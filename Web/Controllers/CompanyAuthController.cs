@@ -1,4 +1,5 @@
-﻿using Application.CQRS.Company.Command.CreateCompany;
+﻿using Application.CQRS;
+using Application.CQRS.Company.Command.CreateCompany;
 using Application.CQRS.Company.Command.LoginCompany;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -21,21 +22,21 @@ namespace Web.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterCompany(CreateCompanyCommand command)
+        public async Task<ActionResult<Response<string?>>> RegisterCompany(CreateCompanyCommand command)
         {
-            var result = await _mediator.Send(command);
+            Response<string?> result = await _mediator.Send(command);
 
-            return result == null ? StatusCode(409, $"Company with email {command.Email} already exists") :
-                 StatusCode(201, "Company created");
+            return result.IsError == true ? StatusCode(result.StatusCode, result.Message) :
+                 StatusCode(201, result.Value);
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> LoginCompany(LoginCompanyCommand command)
+        public async Task<ActionResult<Response<string?>>> LoginCompany(LoginCompanyCommand command)
         {
-            var result = await _mediator.Send(command);
+            Response<string?> result = await _mediator.Send(command);
 
-            return result == null ? Unauthorized("Check email or password") :
-                Ok(result);
-        }  
+            return result.IsError == true ? StatusCode(result.StatusCode, result.Message) :
+                 Ok(result.Value);
+        }
     }
 }

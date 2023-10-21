@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Company.Command.LoginCompany
 {
-    public class LoginCompanyCommand : IRequest<string?>
+    public class LoginCompanyCommand : IRequest<Response<string?>>
     {
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;

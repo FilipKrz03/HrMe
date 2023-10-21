@@ -11,35 +11,47 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Company.Command.LoginCompany
 {
-    public class LoginCompanyCommandHandler : IRequestHandler<LoginCompanyCommand, string?>
+    public class LoginCompanyCommandHandler : IRequestHandler<LoginCompanyCommand, Response<string?>>
     {
         private readonly HrMeContext _context;
-        private readonly IMapper _mapper;
         private readonly IJwtProvider _jwtProvider;
 
         public LoginCompanyCommandHandler(HrMeContext context, IMapper mapper,
             IJwtProvider jwtProvider)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _jwtProvider = jwtProvider ?? throw new ArgumentNullException(nameof(jwtProvider));
         }
 
-        public async Task<string?> Handle(LoginCompanyCommand request, CancellationToken cancellationToken)
+        public async Task<Response<string?>> Handle(LoginCompanyCommand request, CancellationToken cancellationToken)
         {
+
+            Response<string?> response = new();
+
             var company = await _context.Companies
                 .Where(c => c.Email == request.Email)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(cancellationToken);
 
-            if (company == null) return null;
+            if (company == null)
+            {
+                response.SetError(400,
+                    $"Company with emai1 {request.Email} does not exist");
+                return response;
+            } 
 
             bool isCorrectPassword = BCrypt.Net.BCrypt.Verify(request.Password, company.Password);
 
-            if (!isCorrectPassword) return null;
+            if (!isCorrectPassword)
+            {
+                response.SetError(403, "Invalid password");
+                return response;
+            }
 
             string token = _jwtProvider.Generate(request.Email);
 
-            return token;
+            response.Value = token;
+
+            return response;
         }
     }
 }

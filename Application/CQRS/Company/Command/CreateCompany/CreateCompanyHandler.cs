@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Company.Command.CreateCompany
 {
-    public class CreateCompanyHandler : IRequestHandler<CreateCompanyCommand, CompanyResponse?>
+    public class CreateCompanyHandler : IRequestHandler<CreateCompanyCommand, Response<string?>>
     {
         private readonly HrMeContext _context;
         private readonly IMapper _mapper;
@@ -23,11 +23,13 @@ namespace Application.CQRS.Company.Command.CreateCompany
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<CompanyResponse?> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
+        public async Task<Response<string?>> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
         {
+            Response<string?> response = new();
+
             var accountExist =
                 await _context.Companies
-                .AnyAsync(company => company.Email == request.Email);
+                .AnyAsync(company => company.Email == request.Email, cancellationToken);
 
             if (accountExist == false)
             {
@@ -43,10 +45,13 @@ namespace Application.CQRS.Company.Command.CreateCompany
 
                 await _context.SaveChangesAsync(cancellationToken);
 
-                var companyResponse = _mapper.Map<CompanyResponse>(company);
-                return companyResponse;
+                response.Value = "Company created";
+
+                return response;
             }
-            return null;
+
+            response.SetError(409, $"Account with email {request.Email} already exist");
+            return response;
         }
     }
 }
