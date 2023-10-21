@@ -1,30 +1,51 @@
 ﻿using Application;
+using Autofac.Core;
 using FluentValidation;
 using Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
+using System.Text;
 
 namespace Web
 {
-    internal static class StartupHelperExtensions
+    public class Startup
     {
-        public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
+
+        public IConfiguration Configuration { get; set; }
+
+        public Startup(IConfiguration configuration)
         {
-            builder.Services.AddControllers();
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+            Configuration = configuration;
+        }
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllers();
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen();
 
-            var connectionString = builder.Configuration["Connection_String_HrMe"];
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+               .AddJwtBearer(options =>
+               {
+                   options.TokenValidationParameters = new TokenValidationParameters
+                   {
+                       ValidateIssuer = true,
+                       ValidateAudience = true,
+                       ValidateLifetime = true,
+                       ValidateIssuerSigningKey = true,
+                       ValidIssuer = Configuration["Jwt:Issuer"],
+                       ValidAudience = Configuration["Jwt:Issuer"],
+                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]!))
+                   };
+               });
 
-            builder.Services.AddAplication();
-            builder.Services.AddInfrastucture();
+            services.AddAplication();
+            services.AddInfrastucture(Configuration);
 
             ValidatorOptions.Global.LanguageManager.Enabled = false;
-
-            return builder.Build();
         }
 
-        public static WebApplication ConfigurePipeline(this WebApplication app)
+        public void ConfigurePipeline(WebApplication app)
         {
             if (app.Environment.IsDevelopment())
             {
@@ -33,13 +54,16 @@ namespace Web
             }
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
 
             app.UseMiddlewareAplication();
 
+            app.UseAuthentication();
+
+            app.UseAuthorization();
+
             app.MapControllers();
 
-            return app;
+            app.Run();
         }
 
     }

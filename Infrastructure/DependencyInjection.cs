@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.Abstractions;
+using Infrastructure.Authentiaction;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols;
 using System;
@@ -13,12 +16,16 @@ namespace Infrastructure
 
     public static class DependencyInjection
     {
-        public static IServiceCollection AddInfrastucture(this IServiceCollection services)
+        public static IServiceCollection AddInfrastucture(this IServiceCollection services , IConfiguration configuration)
         {
             services.AddDbContext<HrMeContext>(dbContextOptions =>
             {
-                dbContextOptions.UseSqlServer("Server=.;Database=Hrme;Trusted_Connection=True;TrustServerCertificate=True;");
+                var conectionString = configuration["ConnectionStrings:DefaultConnection"];
+
+                dbContextOptions.UseSqlServer(conectionString);
             });
+
+            services.AddSingleton<IJwtProvider , JwtProvider>();
 
             return services;
         }

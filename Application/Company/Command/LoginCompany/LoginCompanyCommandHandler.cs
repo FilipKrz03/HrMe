@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Domain.Abstractions;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +15,14 @@ namespace Application.Company.Command.LoginCompany
     {
         private readonly HrMeContext _context;
         private readonly IMapper _mapper;
+        private readonly IJwtProvider _jwtProvider;
 
-        public LoginCompanyCommandHandler(HrMeContext context, IMapper mapper)
+        public LoginCompanyCommandHandler(HrMeContext context, IMapper mapper , 
+            IJwtProvider jwtProvider)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _jwtProvider = jwtProvider ?? throw new ArgumentNullException(nameof(jwtProvider));
         }
 
         public async Task<string?> Handle(LoginCompanyCommand request, CancellationToken cancellationToken)
@@ -29,11 +33,13 @@ namespace Application.Company.Command.LoginCompany
 
             if (company == null) return null;
 
-            bool isCorrectPassword = BCrypt.Net.BCrypt.Verify(request.Password , company.Password);
+            bool isCorrectPassword = BCrypt.Net.BCrypt.Verify(request.Password, company.Password);
 
             if (!isCorrectPassword) return null;
 
-            return "Logged";
+            string token = _jwtProvider.Generate(request.Email);
+
+            return token;
         }
     }
 }

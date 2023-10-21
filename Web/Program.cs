@@ -2,8 +2,10 @@ using Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var app = builder
-    .ConfigureServices()
-    .ConfigurePipeline();
+var startup = new Startup(builder.Configuration);
 
-app.Run ();
+startup.ConfigureServices(builder.Services);
+
+var app = builder.Build();
+
+startup.ConfigurePipeline(app);    
