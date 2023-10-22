@@ -19,5 +19,18 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
         public string Position { get; set; } = string.Empty;
 
         public string Email { get; set; } = string.Empty;
+
+        public DateTimeOffset DateOfBirth { get; set; }
+
+        public CreateEmployeeCommand(string companyGuid , string firstName , string lastName , 
+            string position , string email , DateTimeOffset dateOffBirth)
+        {
+            CompanyGuid = companyGuid;
+            FirstName = firstName;  
+            LastName = lastName;
+            Position = position;
+            Email = email;
+            DateOfBirth = dateOffBirth;
+        }
     }
 }

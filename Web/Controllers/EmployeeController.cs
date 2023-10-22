@@ -1,4 +1,7 @@
-﻿using Application.CQRS.Employee.Command.CreateEmployee;
+﻿using Application.CQRS;
+using Application.CQRS.Company.Response;
+using Application.CQRS.Employee.Command.CreateEmployee;
+using Application.CQRS.Employee.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -21,20 +24,14 @@ namespace Web.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult> CreateEmployee(CreateEmployeeRequest request)
+        public async Task<ActionResult<Response<EmployeeResponse?>>> CreateEmployee(CreateEmployeeRequest request)
         {
             var companyGuid = User.FindFirstValue(ClaimTypes.PrimarySid);
 
-            CreateEmployeeCommand command = new()
-            {
-                CompanyGuid = companyGuid,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                Email = request.Email,
-                Position = request.Position,
-            };
-
-            var result = await _mediator.Send(command);
+            CreateEmployeeCommand command = new(companyGuid, request.FirstName, request.LastName
+                , request.Position, request.Email, request.DateOfBirth);
+           
+            Response<EmployeeResponse?> result = await _mediator.Send(command);
 
             return result.IsError == true ? StatusCode(result.StatusCode, result.Message)
                 : Ok(result.Value);

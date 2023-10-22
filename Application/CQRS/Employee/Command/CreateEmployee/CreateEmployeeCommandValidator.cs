@@ -16,6 +16,14 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
             RuleFor(p => p.LastName).NotEmpty().MaximumLength(128); 
             RuleFor(p => p.Position).NotEmpty().MaximumLength(64);
             RuleFor(p => p.Email).NotEmpty().EmailAddress();
+            RuleFor(p => p.DateOfBirth).Must(BeAValidDate);
+        }
+
+        private bool BeAValidDate(DateTimeOffset DateOfBirth)
+        {
+            if (DateOfBirth == default)
+                return false;
+            return true;
         }
     }
 }

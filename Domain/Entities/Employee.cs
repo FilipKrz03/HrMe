@@ -25,6 +25,9 @@ namespace Domain.Entities
         [Required]
         public string Email { get; set; } = string.Empty;
 
+        [Required]
+        public DateTimeOffset DateOfBirth { get; set; }
+
         [ForeignKey("CompanyId")]
         public Company Company { get; set; } = null!;
         public Guid CompanyId { get; set; } 
