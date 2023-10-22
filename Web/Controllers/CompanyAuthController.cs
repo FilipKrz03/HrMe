@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace Web.Controllers
 {
-    [Route("api/company/authentication")]
+    [Route("api/companies/authentication")]
     [ApiController]
     public class CompanyAuthController : ControllerBase
     {
