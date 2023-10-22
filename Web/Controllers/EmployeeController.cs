@@ -2,6 +2,7 @@
 using Application.CQRS.Company.Response;
 using Application.CQRS.Employee.Command.CreateEmployee;
 using Application.CQRS.Employee.Query.GetEmployee;
+using Application.CQRS.Employee.Query.GetEmployees;
 using Application.CQRS.Employee.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -59,5 +60,16 @@ namespace Web.Controllers
 
         [Authorize]
         [HttpGet]
+        public async Task<ActionResult<Response<IEnumerable<EmployeeResponse>?>>> GetEmployees()
+        {
+            var companyGuid = Guid.Parse(User.FindFirstValue(ClaimTypes.PrimarySid));
+
+            GetEmployeesQuery query = new(companyGuid);
+
+            var result = await _mediator.Send(query);
+
+            return result.IsError == true ? StatusCode(result.StatusCode, result.Message)
+                : Ok(result.Value);
+        }
     }
 }

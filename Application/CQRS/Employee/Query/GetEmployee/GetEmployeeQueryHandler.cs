@@ -27,10 +27,10 @@ namespace Application.CQRS.Employee.Query.GetEmployee
         {
             Response<EmployeeResponse?> response = new();
 
-            var employeeExist = await _context.Companies
+            var comapnyExist = await _context.Companies
                 .AnyAsync(e => e.Id == request.CompanyId , cancellationToken);
 
-            if(!employeeExist)
+            if(!comapnyExist)
             {
                 response.SetError(404, "We could not found your company in database");
                 return response;
