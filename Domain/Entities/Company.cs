@@ -11,8 +11,17 @@ namespace Domain.Entities
     {
         [Key]
         public Guid Id { get; set; }
+
+        [Required]
         public string CompanyName { get; set; } = string.Empty;
+
+        [Required]
         public string Email { get; set; } = string.Empty;
+
+        [Required]  
         public string Password { get; set; } = string.Empty;
+
+        public ICollection<Employee> Employees { get; set; } =
+            new List<Employee>();
     }
 }

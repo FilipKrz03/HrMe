@@ -8,6 +8,6 @@ namespace Domain.Abstractions
 {
     public interface IJwtProvider
     {
-        string Generate(string emial);  
+        string Generate(string emial , Guid ObjectGuid);  
     }
 }

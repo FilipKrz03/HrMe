@@ -16,16 +16,16 @@ namespace Infrastructure
 
     public static class DependencyInjection
     {
-        public static IServiceCollection AddInfrastucture(this IServiceCollection services , IConfiguration configuration)
+
+        public static IServiceCollection AddInfrastucture(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<HrMeContext>(dbContextOptions =>
             {
                 var conectionString = configuration["ConnectionStrings:DefaultConnection"];
-
                 dbContextOptions.UseSqlServer(conectionString);
             });
 
-            services.AddSingleton<IJwtProvider , JwtProvider>();
+            services.AddSingleton<IJwtProvider, JwtProvider>();
 
             return services;
         }

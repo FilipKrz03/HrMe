@@ -47,7 +47,7 @@ namespace Application.CQRS.Company.Command.LoginCompany
                 return response;
             }
 
-            string token = _jwtProvider.Generate(request.Email);
+            string token = _jwtProvider.Generate(request.Email, company.Id);
 
             response.Value = token;
 

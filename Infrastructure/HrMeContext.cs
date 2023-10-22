@@ -12,8 +12,8 @@ namespace Infrastructure
     {
         public DbSet<Company> Companies { get; set; }
 
+        public DbSet<Employee> Employees { get; set; }
+
         public HrMeContext(DbContextOptions<HrMeContext> options) : base(options) { }
-
-
     }
 }

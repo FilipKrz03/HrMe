@@ -9,19 +9,33 @@ using System.Threading.Tasks;
 
 namespace Infrastructure
 {
-    public class HrMeContextFactory : IDesignTimeDbContextFactory<HrMeContext>  
+    public class HrMeContextFactory : IDesignTimeDbContextFactory<HrMeContext>
     {
 
-        private readonly IConfiguration _configuration; 
-        public HrMeContextFactory(IConfiguration configuration)
+        //private readonly IConfiguration _configuration;
+        //public HrMeContextFactory(IConfiguration configuration)
+        //{
+        //    _configuration = configuration;
+        //}
+        //public HrMeContext CreateDbContext(string[] args)
+        //{
+        //    var conString = _configuration["ConnectionStrings:DefaultConnection"];
+
+        //    var optionsBuilder = new DbContextOptionsBuilder<HrMeContext>();
+        //    optionsBuilder.UseSqlServer(conString);
+
+        //    return new HrMeContext(optionsBuilder.Options);
+        //}
+        HrMeContext IDesignTimeDbContextFactory<HrMeContext>.CreateDbContext(string[] args)
         {
-                _configuration = configuration;
-        }
-        public HrMeContext CreateDbContext(string[] args)
-        {
-            var conString = _configuration["ConnectionStrings:DefaultConnection"];
+            IConfigurationRoot _configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<HrMeContext>();
+            var conString = _configuration["ConnectionStrings:DefaultConnection"];
+
             optionsBuilder.UseSqlServer(conString);
 
             return new HrMeContext(optionsBuilder.Options);
