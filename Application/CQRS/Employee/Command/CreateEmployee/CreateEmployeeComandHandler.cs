@@ -54,7 +54,7 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            response.Value = _mapper.Map<EmployeeResponse>(request);
+            response.Value = _mapper.Map<EmployeeResponse>(employee);
 
             return response;
         }

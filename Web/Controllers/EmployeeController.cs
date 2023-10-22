@@ -1,6 +1,7 @@
 ﻿using Application.CQRS;
 using Application.CQRS.Company.Response;
 using Application.CQRS.Employee.Command.CreateEmployee;
+using Application.CQRS.Employee.Query.GetEmployee;
 using Application.CQRS.Employee.Response;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +13,7 @@ using System.Security.Claims;
 
 namespace Web.Controllers
 {
-    [Route("api/employee")]
+    [Route("api/employees")]
     [ApiController]
     public class EmployeeController : ControllerBase
     {
@@ -20,6 +21,20 @@ namespace Web.Controllers
         public EmployeeController(IMediator mediator)
         {
             _mediator = mediator ?? throw new ArgumentException(nameof(mediator));
+        }
+
+        [HttpGet("{employeeId}" , Name = "GetEmployee")]
+        [Authorize]
+        public async Task<ActionResult<Response<EmployeeResponse?>>> GetEmployee(Guid employeeId)
+        {
+            var companyId = Guid.Parse(User.FindFirstValue(ClaimTypes.PrimarySid));
+
+            GetEmployeeQuery query = new(employeeId , companyId);
+
+            Response<EmployeeResponse?> result = await _mediator.Send(query);
+
+            return result.IsError == true ? StatusCode(result.StatusCode, result.Message)
+                : Ok(result.Value);
         }
 
         [HttpPost]
@@ -34,7 +49,15 @@ namespace Web.Controllers
             Response<EmployeeResponse?> result = await _mediator.Send(command);
 
             return result.IsError == true ? StatusCode(result.StatusCode, result.Message)
-                : Ok(result.Value);
+                : CreatedAtRoute("GetEmployee",
+                new
+                {
+                    employeeId = result.Value!.Id
+                } ,
+                result.Value);
         }
+
+        [Authorize]
+        [HttpGet]
     }
 }

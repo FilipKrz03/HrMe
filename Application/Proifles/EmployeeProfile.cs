@@ -16,7 +16,8 @@ namespace Application.Proifles
         {
             CreateMap<CreateEmployeeCommand, Domain.Entities.Employee>();
 
-            CreateMap<CreateEmployeeCommand, EmployeeResponse>()
+            CreateMap<Domain.Entities.Employee, EmployeeResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.FullName, opt =>
                 opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
                 .ForMember(dest => dest.Position, opt => opt.MapFrom(src => src.Position))
