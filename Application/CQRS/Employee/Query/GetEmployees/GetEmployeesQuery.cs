@@ -10,7 +10,7 @@ namespace Application.CQRS.Employee.Query.GetEmployees
 {
     public class GetEmployeesQuery : IRequest<Response<IEnumerable<EmployeeResponse>?>>
     {
-        public Guid CompanyId { get; set; } 
+        public Guid CompanyId;
 
         public GetEmployeesQuery(Guid companyId)
         {

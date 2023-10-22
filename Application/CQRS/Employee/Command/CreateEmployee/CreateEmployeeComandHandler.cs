@@ -26,7 +26,7 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
             Response<EmployeeResponse?> response = new();
 
             var employeeCompany = await _context.Companies
-                .Where(c => c.Id == Guid.Parse(request.CompanyGuid))
+                .Where(c => c.Id == request.CompanyGuid)
                 .Include(c => c.Employees)
                 .FirstOrDefaultAsync(cancellationToken);
 

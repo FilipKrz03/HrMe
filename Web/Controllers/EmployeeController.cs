@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Web.Services;
 
 namespace Web.Controllers
 {
@@ -19,18 +20,20 @@ namespace Web.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public EmployeeController(IMediator mediator)
+        private readonly UserService _userService;
+        public EmployeeController(IMediator mediator , UserService userService)
         {
             _mediator = mediator ?? throw new ArgumentException(nameof(mediator));
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
         [HttpGet("{employeeId}" , Name = "GetEmployee")]
         [Authorize]
         public async Task<ActionResult<Response<EmployeeResponse?>>> GetEmployee(Guid employeeId)
         {
-            var companyId = Guid.Parse(User.FindFirstValue(ClaimTypes.PrimarySid));
+            var companyGuid = _userService.GetUserId();
 
-            GetEmployeeQuery query = new(employeeId , companyId);
+            GetEmployeeQuery query = new(employeeId , companyGuid);
 
             Response<EmployeeResponse?> result = await _mediator.Send(query);
 
@@ -42,7 +45,7 @@ namespace Web.Controllers
         [Authorize]
         public async Task<ActionResult<Response<EmployeeResponse?>>> CreateEmployee(CreateEmployeeRequest request)
         {
-            var companyGuid = User.FindFirstValue(ClaimTypes.PrimarySid);
+            var companyGuid = _userService.GetUserId();
 
             CreateEmployeeCommand command = new(companyGuid, request.FirstName, request.LastName
                 , request.Position, request.Email, request.DateOfBirth);
@@ -62,11 +65,11 @@ namespace Web.Controllers
         [HttpGet]
         public async Task<ActionResult<Response<IEnumerable<EmployeeResponse>?>>> GetEmployees()
         {
-            var companyGuid = Guid.Parse(User.FindFirstValue(ClaimTypes.PrimarySid));
+            var companyGuid = _userService.GetUserId();
 
             GetEmployeesQuery query = new(companyGuid);
 
-            var result = await _mediator.Send(query);
+            Response<IEnumerable<EmployeeResponse>?> result = await _mediator.Send(query);
 
             return result.IsError == true ? StatusCode(result.StatusCode, result.Message)
                 : Ok(result.Value);

@@ -11,7 +11,7 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
     {
         public CreateEmployeeCommandValidator()
         {
-            RuleFor(p => p.CompanyGuid).NotEmpty().Length(36);
+            RuleFor(p => p.CompanyGuid).NotEmpty();
             RuleFor(p => p.FirstName).NotEmpty().MaximumLength(128);
             RuleFor(p => p.LastName).NotEmpty().MaximumLength(128); 
             RuleFor(p => p.Position).NotEmpty().MaximumLength(64);

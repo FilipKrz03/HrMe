@@ -10,7 +10,7 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
 {
     public class CreateEmployeeCommand : IRequest<Response<EmployeeResponse?>>
     {
-        public string CompanyGuid { get; set; } = string.Empty;
+        public Guid CompanyGuid { get; set; } 
 
         public string FirstName { get; set; } = string.Empty;
 
@@ -22,7 +22,7 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
 
         public DateTimeOffset DateOfBirth { get; set; }
 
-        public CreateEmployeeCommand(string companyGuid , string firstName , string lastName , 
+        public CreateEmployeeCommand(Guid companyGuid , string firstName , string lastName , 
             string position , string email , DateTimeOffset dateOffBirth)
         {
             CompanyGuid = companyGuid;

@@ -41,7 +41,9 @@ namespace Application.CQRS.Employee.Query.GetEmployees
 
             var employeList = await _context.Employees
                 .Where(e => e.CompanyId == request.CompanyId)
-                .ToListAsync(cancellationToken);
+                .ToListAsync();
+
+
 
             response.Value = _mapper.Map<IEnumerable<EmployeeResponse>>(employeList);
 

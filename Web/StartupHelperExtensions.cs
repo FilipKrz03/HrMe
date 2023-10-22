@@ -1,11 +1,13 @@
 ﻿using Application;
 using Autofac.Core;
+using Domain.Abstractions;
 using FluentValidation;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
+using Web.Services;
 
 namespace Web
 {
@@ -22,6 +24,8 @@ namespace Web
         {
             services.AddControllers();
             services.AddEndpointsApiExplorer();
+            services.AddHttpContextAccessor();
+            services.AddScoped<IUserService , UserService>();
             services.AddSwaggerGen();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
