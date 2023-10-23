@@ -10,7 +10,7 @@ namespace Application.CQRS.WorkDay.Response
     {
         public Guid Id { get; set; }
 
-        public DateOnly Day { get; set; }
+        public DateOnly WorkDayDate { get; set; }
 
         public TimeOnly StartTime { get; set; }
 

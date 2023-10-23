@@ -8,7 +8,7 @@ namespace Application.CQRS.WorkDay.Command.CreateWorkDay
 {
     public class CreateWorkDayRequest
     {
-        public DateTime Day { get; set; }
+        public DateTime WorkDayDate { get; set; }
 
         public TimeOnly StartTime { get; set; }
 

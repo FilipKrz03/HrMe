@@ -14,18 +14,18 @@ namespace Application.CQRS.WorkDay.Command.CreateWorkDay
 
         public Guid EmployeeId { get; set; }
 
-        public DateTime Day { get; set; }
+        public DateTime WorkDayDate { get; set; }
 
         public TimeOnly StartTime { get; set; }
 
         public TimeOnly EndTime { get; set; }
 
         public CreateWorkDayCommand
-            (Guid companyId,  Guid employeeId , DateTime day , TimeOnly startTime , TimeOnly endTime)
+            (Guid companyId,  Guid employeeId , DateTime workDayDate , TimeOnly startTime , TimeOnly endTime)
         {
             CompanyId = companyId;
             EmployeeId = employeeId;
-            Day = day;
+            WorkDayDate = workDayDate;
             StartTime = startTime;
             EndTime = endTime;
         }

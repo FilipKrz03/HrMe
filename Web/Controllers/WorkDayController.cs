@@ -31,7 +31,7 @@ namespace Web.Controllers
             var comapnyId = _userService.GetUserId();
 
             CreateWorkDayCommand command = 
-                new(comapnyId, employeeId, request.Day, request.StartTime, request.EndTime);
+                new(comapnyId, employeeId, request.WorkDayDate, request.StartTime, request.EndTime);
 
             Response<WorkDayResponse?> result = await _mediator.Send(command);
 

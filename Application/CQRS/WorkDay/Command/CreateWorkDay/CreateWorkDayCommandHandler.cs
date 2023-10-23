@@ -49,15 +49,19 @@ namespace Application.CQRS.WorkDay.Command.CreateWorkDay
                 return response;
             }
 
-            // var workDayExist =
-            //    employee.WorkDays
-            //    .Any(d => d.Day == request.Day);
+            var workDayExist = await _context.EmployeesWorkDays
+                .AnyAsync
+                (w => w.WorkDayDate.Day == request.WorkDayDate.Day
+                && w.WorkDayDate.Month == request.WorkDayDate.Month
+                && w.WorkDayDate.Year == request.WorkDayDate.Year
+                && request.EmployeeId == employee.Id , cancellationToken);    
 
-            //if(workDayExist)
-            //{
-            //    response.SetError(409, $"Employee already has working day on {request.Day}");
-            //    return response;
-            //}
+            if (workDayExist)
+            {
+                response.SetError
+                    (409, $"Employee already has working day on {request.WorkDayDate.Date:MM/dd/yyyy}");
+                return response;
+            }
 
             EmployeeWorkDay workDayEntity = _mapper.Map<EmployeeWorkDay>(request);
 

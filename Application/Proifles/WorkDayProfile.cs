@@ -27,8 +27,8 @@ namespace Application.Proifles
                 .ForMember(dest => dest.EndTime,
                 opt => opt.MapFrom
                 (src => TimeOnlyExtensions.CalculateTimeFromMinutesAfterMidnight(src.EndTimeInMinutesAfterMidnight)))
-                .ForMember(dest => dest.Day,
-                opt => opt.MapFrom(src => DateTimeExtensions.ConvertDateTimeOffSetToDateOnly(src.Day)));
+                .ForMember(dest => dest.WorkDayDate,
+                opt => opt.MapFrom(src => DateTimeExtensions.ConvertDateTimeOffSetToDateOnly(src.WorkDayDate)));
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Domain.Entities
         [Key]
         public Guid Id { get; set; }   
         
-        public DateTime Day { get; set; } 
+        public DateTime WorkDayDate { get; set; } 
 
         public int StartTimeInMinutesAfterMidnight {  get; set; }
 
