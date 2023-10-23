@@ -22,7 +22,7 @@ namespace Application.Proifles
                 opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
                 .ForMember(dest => dest.Position, opt => opt.MapFrom(src => src.Position))
                 .ForMember(dest => dest.Age, opt =>
-                opt.MapFrom(src => DateTimeOffSetExtensions.CalculateAge(src.DateOfBirth)));
+                opt.MapFrom(src => DateTimeExtensions.CalculateAge(src.DateOfBirth)));
         }
     }
 }

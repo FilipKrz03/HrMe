@@ -26,7 +26,10 @@ namespace Domain.Entities
         public string Email { get; set; } = string.Empty;
 
         [Required]
-        public DateTimeOffset DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
+
+        public ICollection<EmployeeWorkDay> WorkDays { get; set; }
+         = new List<EmployeeWorkDay>();
 
         [ForeignKey("CompanyId")]
         public Company Company { get; set; } = null!;

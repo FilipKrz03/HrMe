@@ -16,6 +16,6 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
 
         public string Position { get; set; } = string.Empty;
 
-        public DateTimeOffset DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
     }
 }

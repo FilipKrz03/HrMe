@@ -14,6 +14,8 @@ namespace Infrastructure
 
         public DbSet<Employee> Employees { get; set; }
 
+        public DbSet<EmployeeWorkDay> EmployeesWorkDays { get; set; }
+
         public HrMeContext(DbContextOptions<HrMeContext> options) : base(options) { }
     }
 }

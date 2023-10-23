@@ -19,7 +19,7 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
             RuleFor(p => p.DateOfBirth).Must(BeAValidDate);
         }
 
-        private bool BeAValidDate(DateTimeOffset DateOfBirth)
+        private bool BeAValidDate(DateTime DateOfBirth)
         {
             if (DateOfBirth == default)
                 return false;

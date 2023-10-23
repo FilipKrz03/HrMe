@@ -4,6 +4,7 @@ using Application.CQRS.Employee.Command.CreateEmployee;
 using Application.CQRS.Employee.Query.GetEmployee;
 using Application.CQRS.Employee.Query.GetEmployees;
 using Application.CQRS.Employee.Response;
+using Domain.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,8 +21,8 @@ namespace Web.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly UserService _userService;
-        public EmployeeController(IMediator mediator , UserService userService)
+        private readonly IUserService _userService;
+        public EmployeeController(IMediator mediator , IUserService userService)
         {
             _mediator = mediator ?? throw new ArgumentException(nameof(mediator));
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
@@ -66,7 +67,7 @@ namespace Web.Controllers
         public async Task<ActionResult<Response<IEnumerable<EmployeeResponse>?>>> GetEmployees()
         {
             var companyGuid = _userService.GetUserId();
-
+            
             GetEmployeesQuery query = new(companyGuid);
 
             Response<IEnumerable<EmployeeResponse>?> result = await _mediator.Send(query);

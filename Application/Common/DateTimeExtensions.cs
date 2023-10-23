@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Application.Common
 {
-    public static class DateTimeOffSetExtensions
+    public static class DateTimeExtensions
     {
-        public static int CalculateAge(DateTimeOffset birthDate)
+        public static int CalculateAge(DateTime birthDate)
         {
             int age = DateTime.Now.Year - birthDate.Year;
 
@@ -23,6 +23,14 @@ namespace Application.Common
             }
 
             return age;
+        }
+
+        public static DateOnly ConvertDateTimeOffSetToDateOnly(DateTime date)
+        {
+            DateOnly dateOnly = new
+                (date.Year , date.Month , date.Day);
+
+            return dateOnly;
         }
     }
 }
