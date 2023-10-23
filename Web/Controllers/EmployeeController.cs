@@ -18,6 +18,7 @@ namespace Web.Controllers
 {
     [Route("api/employees")]
     [ApiController]
+    [Authorize]
     public class EmployeeController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -29,7 +30,7 @@ namespace Web.Controllers
         }
 
         [HttpGet("{employeeId}" , Name = "GetEmployee")]
-        [Authorize]
+
         public async Task<ActionResult<Response<EmployeeResponse?>>> GetEmployee(Guid employeeId)
         {
             var companyGuid = _userService.GetUserId();
@@ -43,7 +44,6 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<ActionResult<Response<EmployeeResponse?>>> CreateEmployee(CreateEmployeeRequest request)
         {
             var companyGuid = _userService.GetUserId();
@@ -62,7 +62,6 @@ namespace Web.Controllers
                 result.Value);
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult<Response<IEnumerable<EmployeeResponse>?>>> GetEmployees()
         {

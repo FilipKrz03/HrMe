@@ -13,6 +13,7 @@ namespace Web.Controllers
 {
     [Route("api/employees/{employeeId}/workdays")]
     [ApiController]
+    [Authorize]
 
     public class WorkDayController : ControllerBase
     {
@@ -27,7 +28,6 @@ namespace Web.Controllers
                 throw new ArgumentNullException(nameof(userService));
         }
 
-        [Authorize]
         [HttpGet("{workDayId}" , Name = "GetWorkDay")]
         public async Task<ActionResult<Response<WorkDayResponse>>> GetEmployeeWorkDay(Guid employeeId, Guid workDayId)
         {
@@ -40,8 +40,7 @@ namespace Web.Controllers
             return result.IsError == true ? StatusCode(result.StatusCode, result.Message) :
                   Ok(result.Value);
         }
-
-        [Authorize]
+    
         [HttpPost]
         public async Task<ActionResult<Response<WorkDayResponse?>>> CreateEmployeeWorkDay(Guid employeeId , CreateWorkDayRequest request)
         {
