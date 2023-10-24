@@ -1,6 +1,7 @@
 ﻿using Application.CQRS;
 using Application.CQRS.WorkDay.Command.CreateWorkDay;
 using Application.CQRS.WorkDay.Query.GetWorkDay;
+using Application.CQRS.WorkDay.Query.GetWorkDays;
 using Application.CQRS.WorkDay.Response;
 using Domain.Abstractions;
 using MediatR;
@@ -33,7 +34,7 @@ namespace Web.Controllers
         {
             var companyId = _userService.GetUserId();
 
-            GetWorkDayQuery query = new GetWorkDayQuery(companyId , employeeId , workDayId);
+            GetWorkDayQuery query = new (companyId , employeeId , workDayId);
 
             Response <WorkDayResponse> result = await _mediator.Send(query);
 
@@ -57,6 +58,20 @@ namespace Web.Controllers
                       employeeId , 
                       workDayId = result.Value!.Id
                   } , result.Value);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<Response<IEnumerable<WorkDayResponse>>>> GetWorkDays(Guid employeeId)
+        {
+            var companyId = _userService.GetUserId();
+
+            GetWorkDaysQuery query = new GetWorkDaysQuery(companyId , employeeId);
+
+            Response<IEnumerable<WorkDayResponse>> result = await _mediator.Send(query);
+
+
+            return result.IsError == true ? StatusCode(result.StatusCode, result.Message) :
+                  Ok(result.Value);
         }
     }
 }
