@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Employee.Query.GetEmployees
 {
-    public class GetEmployeesQuery : IRequest<Response<IEnumerable<EmployeeResponse>?>>
+    public class GetEmployeesQuery : IRequest<Response<IEnumerable<EmployeeResponse>>>
     {
         public Guid CompanyId;
 

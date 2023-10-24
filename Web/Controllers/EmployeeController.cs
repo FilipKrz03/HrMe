@@ -31,27 +31,27 @@ namespace Web.Controllers
 
         [HttpGet("{employeeId}" , Name = "GetEmployee")]
 
-        public async Task<ActionResult<Response<EmployeeResponse?>>> GetEmployee(Guid employeeId)
+        public async Task<ActionResult<Response<EmployeeResponse>>> GetEmployee(Guid employeeId)
         {
             var companyGuid = _userService.GetUserId();
 
             GetEmployeeQuery query = new(employeeId , companyGuid);
 
-            Response<EmployeeResponse?> result = await _mediator.Send(query);
+            Response<EmployeeResponse> result = await _mediator.Send(query);
 
             return result.IsError == true ? StatusCode(result.StatusCode, result.Message)
                 : Ok(result.Value);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Response<EmployeeResponse?>>> CreateEmployee(CreateEmployeeRequest request)
+        public async Task<ActionResult<Response<EmployeeResponse>>> CreateEmployee(CreateEmployeeRequest request)
         {
             var companyGuid = _userService.GetUserId();
 
             CreateEmployeeCommand command = new(companyGuid, request.FirstName, request.LastName
                 , request.Position, request.Email, request.DateOfBirth);
            
-            Response<EmployeeResponse?> result = await _mediator.Send(command);
+            Response<EmployeeResponse> result = await _mediator.Send(command);
 
             return result.IsError == true ? StatusCode(result.StatusCode, result.Message)
                 : CreatedAtRoute("GetEmployee",
@@ -63,13 +63,13 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Response<IEnumerable<EmployeeResponse>?>>> GetEmployees()
+        public async Task<ActionResult<Response<IEnumerable<EmployeeResponse>>>> GetEmployees()
         {
             var companyGuid = _userService.GetUserId();
             
             GetEmployeesQuery query = new(companyGuid);
 
-            Response<IEnumerable<EmployeeResponse>?> result = await _mediator.Send(query);
+            Response<IEnumerable<EmployeeResponse>> result = await _mediator.Send(query);
 
             return result.IsError == true ? StatusCode(result.StatusCode, result.Message)
                 : Ok(result.Value);

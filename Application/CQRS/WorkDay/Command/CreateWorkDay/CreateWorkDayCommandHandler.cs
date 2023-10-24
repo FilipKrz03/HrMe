@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.WorkDay.Command.CreateWorkDay
 {
-    public class CreateWorkDayCommandHandler : IRequestHandler<CreateWorkDayCommand, Response<WorkDayResponse?>>
+    public class CreateWorkDayCommandHandler : IRequestHandler<CreateWorkDayCommand, Response<WorkDayResponse>>
     {
         
         private readonly IMapper _mapper;
@@ -24,9 +24,9 @@ namespace Application.CQRS.WorkDay.Command.CreateWorkDay
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));   
         }
 
-        public async Task<Response<WorkDayResponse?>> Handle(CreateWorkDayCommand request, CancellationToken cancellationToken)
+        public async Task<Response<WorkDayResponse>> Handle(CreateWorkDayCommand request, CancellationToken cancellationToken)
         {
-            Response<WorkDayResponse?> response = new();
+            Response<WorkDayResponse> response = new();
 
             var companyExist = await _context
                 .Companies

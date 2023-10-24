@@ -43,14 +43,14 @@ namespace Web.Controllers
         }
     
         [HttpPost]
-        public async Task<ActionResult<Response<WorkDayResponse?>>> CreateEmployeeWorkDay(Guid employeeId , CreateWorkDayRequest request)
+        public async Task<ActionResult<Response<WorkDayResponse>>> CreateEmployeeWorkDay(Guid employeeId , CreateWorkDayRequest request)
         {
             var comapnyId = _userService.GetUserId();
 
             CreateWorkDayCommand command = 
                 new(comapnyId, employeeId, request.WorkDayDate, request.StartTime, request.EndTime);
 
-            Response<WorkDayResponse?> result = await _mediator.Send(command);
+            Response<WorkDayResponse> result = await _mediator.Send(command);
 
             return result.IsError == true ? StatusCode(result.StatusCode, result.Message) :
                   CreatedAtRoute("GetWorkDay", new
@@ -65,10 +65,9 @@ namespace Web.Controllers
         {
             var companyId = _userService.GetUserId();
 
-            GetWorkDaysQuery query = new GetWorkDaysQuery(companyId , employeeId);
+            GetWorkDaysQuery query = new(companyId , employeeId);
 
             Response<IEnumerable<WorkDayResponse>> result = await _mediator.Send(query);
-
 
             return result.IsError == true ? StatusCode(result.StatusCode, result.Message) :
                   Ok(result.Value);

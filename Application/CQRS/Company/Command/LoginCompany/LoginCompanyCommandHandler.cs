@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Company.Command.LoginCompany
 {
-    public class LoginCompanyCommandHandler : IRequestHandler<LoginCompanyCommand, Response<string?>>
+    public class LoginCompanyCommandHandler : IRequestHandler<LoginCompanyCommand, Response<string>>
     {
         private readonly HrMeContext _context;
         private readonly IJwtProvider _jwtProvider;
@@ -23,10 +23,10 @@ namespace Application.CQRS.Company.Command.LoginCompany
             _jwtProvider = jwtProvider ?? throw new ArgumentNullException(nameof(jwtProvider));
         }
 
-        public async Task<Response<string?>> Handle(LoginCompanyCommand request, CancellationToken cancellationToken)
+        public async Task<Response<string>> Handle(LoginCompanyCommand request, CancellationToken cancellationToken)
         {
 
-            Response<string?> response = new();
+            Response<string> response = new();
 
             var company = await _context.Companies
                 .Where(c => c.Email == request.Email)

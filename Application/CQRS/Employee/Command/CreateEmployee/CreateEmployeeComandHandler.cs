@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Employee.Command.CreateEmployee
 {
-    public class CreateEmployeeComandHandler : IRequestHandler<CreateEmployeeCommand, Response<EmployeeResponse?>>
+    public class CreateEmployeeComandHandler : IRequestHandler<CreateEmployeeCommand, Response<EmployeeResponse>>
     {
         private readonly HrMeContext _context;
         private readonly IMapper _mapper;
@@ -21,9 +21,9 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
             _context = context??throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
-        public async Task<Response<EmployeeResponse?>> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
+        public async Task<Response<EmployeeResponse>> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
         {
-            Response<EmployeeResponse?> response = new();
+            Response<EmployeeResponse> response = new();
 
             var employeeCompany = await _context.Companies
                 .Where(c => c.Id == request.CompanyGuid)

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Company.Command.CreateCompany
 {
-    public class CreateCompanyHandler : IRequestHandler<CreateCompanyCommand, Response<string?>>
+    public class CreateCompanyHandler : IRequestHandler<CreateCompanyCommand, Response<string>>
     {
         private readonly HrMeContext _context;
         private readonly IMapper _mapper;
@@ -23,9 +23,9 @@ namespace Application.CQRS.Company.Command.CreateCompany
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<Response<string?>> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
+        public async Task<Response<string>> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
         {
-            Response<string?> response = new();
+            Response<string> response = new();
 
             var accountExist =
                 await _context.Companies

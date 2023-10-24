@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.WorkDay.Command.CreateWorkDay
 {
-    public class CreateWorkDayCommand : IRequest<Response<WorkDayResponse?>>
+    public class CreateWorkDayCommand : IRequest<Response<WorkDayResponse>>
     {
         public Guid CompanyId { get; set; }
 

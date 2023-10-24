@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Employee.Command.CreateEmployee
 {
-    public class CreateEmployeeCommand : IRequest<Response<EmployeeResponse?>>
+    public class CreateEmployeeCommand : IRequest<Response<EmployeeResponse>>
     {
         public Guid CompanyGuid { get; set; } 
 

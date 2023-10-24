@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Employee.Query.GetEmployee
 {
-    public class GetEmployeeQueryHandler : IRequestHandler<GetEmployeeQuery, Response<EmployeeResponse?>>
+    public class GetEmployeeQueryHandler : IRequestHandler<GetEmployeeQuery, Response<EmployeeResponse>>
     {
         private readonly HrMeContext _context;
         private readonly IMapper _mapper;
@@ -23,9 +23,9 @@ namespace Application.CQRS.Employee.Query.GetEmployee
             _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));    
         }
-        public async Task<Response<EmployeeResponse?>> Handle(GetEmployeeQuery request, CancellationToken cancellationToken)
+        public async Task<Response<EmployeeResponse>> Handle(GetEmployeeQuery request, CancellationToken cancellationToken)
         {
-            Response<EmployeeResponse?> response = new();
+            Response<EmployeeResponse> response = new();
 
             var comapnyExist = await _context.Companies
                 .AnyAsync(e => e.Id == request.CompanyId , cancellationToken);

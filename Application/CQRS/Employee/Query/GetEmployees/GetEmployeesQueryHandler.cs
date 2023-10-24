@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Employee.Query.GetEmployees
 {
-    public class GetEmployeesQueryHandler : IRequestHandler<GetEmployeesQuery, Response<IEnumerable<EmployeeResponse>?>>
+    public class GetEmployeesQueryHandler : IRequestHandler<GetEmployeesQuery, Response<IEnumerable<EmployeeResponse>>>
     {
         private readonly HrMeContext _context;
         private readonly IMapper _mapper;
@@ -25,10 +25,10 @@ namespace Application.CQRS.Employee.Query.GetEmployees
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<Response<IEnumerable<EmployeeResponse>?>> 
+        public async Task<Response<IEnumerable<EmployeeResponse>>> 
             Handle(GetEmployeesQuery request, CancellationToken cancellationToken)
         {
-            Response<IEnumerable<EmployeeResponse>?> response = new();
+            Response<IEnumerable<EmployeeResponse>> response = new();
 
             var comapnyExist = await _context.Companies
               .AnyAsync(e => e.Id == request.CompanyId, cancellationToken);
@@ -42,8 +42,6 @@ namespace Application.CQRS.Employee.Query.GetEmployees
             var employeList = await _context.Employees
                 .Where(e => e.CompanyId == request.CompanyId)
                 .ToListAsync();
-
-
 
             response.Value = _mapper.Map<IEnumerable<EmployeeResponse>>(employeList);
 

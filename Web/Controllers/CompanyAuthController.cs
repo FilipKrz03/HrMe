@@ -22,18 +22,18 @@ namespace Web.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<Response<string?>>> RegisterCompany(CreateCompanyCommand command)
+        public async Task<ActionResult<Response<string>>> RegisterCompany(CreateCompanyCommand command)
         {
-            Response<string?> result = await _mediator.Send(command);
+            Response<string> result = await _mediator.Send(command);
 
             return result.IsError == true ? StatusCode(result.StatusCode, result.Message) :
                  StatusCode(201, result.Value);
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<Response<string?>>> LoginCompany(LoginCompanyCommand command)
+        public async Task<ActionResult<Response<string>>> LoginCompany(LoginCompanyCommand command)
         {
-            Response<string?> result = await _mediator.Send(command);
+            Response<string> result = await _mediator.Send(command);
 
             return result.IsError == true ? StatusCode(result.StatusCode, result.Message) :
                  Ok(result.Value);
