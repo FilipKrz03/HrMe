@@ -31,6 +31,9 @@ namespace Domain.Entities
         public ICollection<EmployeeWorkDay> WorkDays { get; set; }
          = new List<EmployeeWorkDay>();
 
+        public ICollection<EmployeePaymentInfo> PaymentInfos { get; set; }
+            = new List<EmployeePaymentInfo>();
+
         [ForeignKey("CompanyId")]
         public Company Company { get; set; } = null!;
         public Guid CompanyId { get; set; } 
