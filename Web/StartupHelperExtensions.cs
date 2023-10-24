@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 using Web.Services;
 
 namespace Web
@@ -22,7 +23,12 @@ namespace Web
         }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(opiton =>
+                {
+                    opiton.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                });
+
             services.AddEndpointsApiExplorer();
             services.AddHttpContextAccessor();
             services.AddScoped<IUserService , UserService>();

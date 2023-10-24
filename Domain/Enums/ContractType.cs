@@ -8,8 +8,8 @@ namespace Domain.Enums
 {
     public enum ContractType
     {
-        MandatoryContract , 
-        ContractOfEmployment , 
-        ContractOfEmploymentWithStudentStauts
+        MandatoryContract = 1, 
+        ContractOfEmployment = 2 , 
+        ContractOfEmploymentWithStudentStauts = 3 
     }
 }
