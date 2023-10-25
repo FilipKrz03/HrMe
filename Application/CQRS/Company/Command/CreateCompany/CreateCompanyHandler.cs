@@ -50,8 +50,8 @@ namespace Application.CQRS.Company.Command.CreateCompany
                 return response;
             }
 
-            response.SetError(409, $"Account with email {request.Email} already exist");
-            return response;
+           return
+                response.SetError(409, $"Account with email {request.Email} already exist");
         }
     }
 }

@@ -32,19 +32,18 @@ namespace Application.CQRS.WorkDay.Query.GetWorkDay
 
             if (!companyExist)
             {
-                response.SetError(404, "We could not find your company");
-                return response;
+                return response.SetError(404, "We could not find your company");
             }
 
             var employeeExist = await _context
                 .Employees
                 .AnyAsync(e => e.Id == request.EmployeeId && e.CompanyId == request.CompanyId, cancellationToken);
-          
+
 
             if (employeeExist == false)
             {
-                response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
-                return response;
+                return 
+                    response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
             }
 
             var workDay = await _context.EmployeesWorkDays
@@ -53,7 +52,8 @@ namespace Application.CQRS.WorkDay.Query.GetWorkDay
 
             if (workDay == null)
             {
-                response.SetError(404 , $"We could not find work day with id {request.WorkDayId}");
+                return 
+                    response.SetError(404, $"We could not find work day with id {request.WorkDayId}");
             }
 
             response.Value = _mapper.Map<WorkDayResponse>(workDay);

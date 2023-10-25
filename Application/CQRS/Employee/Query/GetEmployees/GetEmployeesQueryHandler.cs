@@ -25,7 +25,7 @@ namespace Application.CQRS.Employee.Query.GetEmployees
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<Response<IEnumerable<EmployeeResponse>>> 
+        public async Task<Response<IEnumerable<EmployeeResponse>>>
             Handle(GetEmployeesQuery request, CancellationToken cancellationToken)
         {
             Response<IEnumerable<EmployeeResponse>> response = new();
@@ -35,8 +35,7 @@ namespace Application.CQRS.Employee.Query.GetEmployees
 
             if (!comapnyExist)
             {
-                response.SetError(404, "We could not found your company in database");
-                return response;
+                return response.SetError(404, "We could not found your company in database");
             }
 
             var employeList = await _context.Employees

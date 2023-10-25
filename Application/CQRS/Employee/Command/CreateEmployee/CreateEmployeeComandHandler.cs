@@ -16,9 +16,9 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
     {
         private readonly HrMeContext _context;
         private readonly IMapper _mapper;
-        public CreateEmployeeComandHandler(HrMeContext context , IMapper mapper)
+        public CreateEmployeeComandHandler(HrMeContext context, IMapper mapper)
         {
-            _context = context??throw new ArgumentNullException(nameof(context));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
         public async Task<Response<EmployeeResponse>> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
@@ -30,21 +30,19 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
                 .Include(c => c.Employees)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if(employeeCompany == null)
+            if (employeeCompany == null)
             {
-                response.SetError(500, "We occured some unexpected error");
-                return response;
+                return response.SetError(500, "We occured some unexpected error");
             }
 
             var employeeExist = await _context.Employees
                  .Where(e => e.Email == request.Email)
                  .FirstOrDefaultAsync(cancellationToken);
 
-            if(employeeExist != null)
+            if (employeeExist != null)
             {
-                response.SetError(409,
+                return response.SetError(409,
                     $"The employe already exist in our database , and works in {employeeExist.Company.CompanyName} company");
-                return response;
             }
 
             Domain.Entities.Employee employee

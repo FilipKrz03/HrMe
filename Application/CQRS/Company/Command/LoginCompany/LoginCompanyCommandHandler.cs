@@ -34,17 +34,15 @@ namespace Application.CQRS.Company.Command.LoginCompany
 
             if (company == null)
             {
-                response.SetError(400,
-                    $"Company with emai1 {request.Email} does not exist");
-                return response;
-            } 
+                return response.SetError(400,
+                      $"Company with emai1 {request.Email} does not exist");
+            }
 
             bool isCorrectPassword = BCrypt.Net.BCrypt.Verify(request.Password, company.Password);
 
             if (!isCorrectPassword)
             {
-                response.SetError(403, "Invalid password");
-                return response;
+                return response.SetError(403, "Invalid password");
             }
 
             string token = _jwtProvider.Generate(request.Email, company.Id);

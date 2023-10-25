@@ -19,10 +19,10 @@ namespace Application.CQRS.PaymentInfo.Command.CreatePaymentInfo
         private readonly HrMeContext _context;
         private readonly IMapper _mapper;
 
-        public CreatePaymentInfoCommandHandler(HrMeContext context , IMapper mapper)
+        public CreatePaymentInfoCommandHandler(HrMeContext context, IMapper mapper)
         {
-            _mapper = mapper ?? 
-                throw new ArgumentNullException(nameof(mapper)); 
+            _mapper = mapper ??
+                throw new ArgumentNullException(nameof(mapper));
             _context = context ??
                 throw new ArgumentNullException(nameof(context));
         }
@@ -38,8 +38,7 @@ namespace Application.CQRS.PaymentInfo.Command.CreatePaymentInfo
 
             if (!companyExist)
             {
-                response.SetError(404, "We could not find your company");
-                return response;
+                return response.SetError(404, "We could not find your company");
             }
 
             var employee = await _context
@@ -50,8 +49,7 @@ namespace Application.CQRS.PaymentInfo.Command.CreatePaymentInfo
 
             if (employee == null)
             {
-                response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
-                return response;
+                return response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
             }
 
             bool isPaymantInfoDayRangeAvaliable =
@@ -60,8 +58,7 @@ namespace Application.CQRS.PaymentInfo.Command.CreatePaymentInfo
 
             if (isPaymantInfoDayRangeAvaliable == false)
             {
-                response.SetError(409, "Employee has already contract on requested time range");
-                return response;
+                return response.SetError(409, "Employee has already contract on requested time range");
             }
 
             EmployeePaymentInfo paymentInfoEntity = _mapper.Map<EmployeePaymentInfo>(request);

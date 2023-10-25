@@ -13,11 +13,13 @@ namespace Application.CQRS
         public string Message { get; set; } = string.Empty;
         public TValue? Value { get; set; }
 
-        public void SetError(int statusCode, string message)
+        public Response<TValue> SetError(int statusCode, string message)
         {
             StatusCode = statusCode;
             Message = message;
             IsError = true;
+
+            return this;
         }
     }
 }

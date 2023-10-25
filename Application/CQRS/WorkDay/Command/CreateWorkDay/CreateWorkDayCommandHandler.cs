@@ -14,14 +14,14 @@ namespace Application.CQRS.WorkDay.Command.CreateWorkDay
 {
     public class CreateWorkDayCommandHandler : IRequestHandler<CreateWorkDayCommand, Response<WorkDayResponse>>
     {
-        
+
         private readonly IMapper _mapper;
         private readonly HrMeContext _context;
 
-        public CreateWorkDayCommandHandler(HrMeContext context , IMapper mapper)
+        public CreateWorkDayCommandHandler(HrMeContext context, IMapper mapper)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));   
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         public async Task<Response<WorkDayResponse>> Handle(CreateWorkDayCommand request, CancellationToken cancellationToken)
@@ -30,12 +30,11 @@ namespace Application.CQRS.WorkDay.Command.CreateWorkDay
 
             var companyExist = await _context
                 .Companies
-                .AnyAsync(c => c.Id == request.CompanyId , cancellationToken);
+                .AnyAsync(c => c.Id == request.CompanyId, cancellationToken);
 
-            if(!companyExist)
+            if (!companyExist)
             {
-                response.SetError(404, "We could not find your company");
-                return response;
+                return response.SetError(404, "We could not find your company");
             }
 
             var employee = await _context
@@ -43,10 +42,9 @@ namespace Application.CQRS.WorkDay.Command.CreateWorkDay
                 .Where(e => e.Id == request.EmployeeId && e.CompanyId == request.CompanyId)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if(employee == null)
+            if (employee == null)
             {
-                response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
-                return response;
+                return response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
             }
 
             var workDayExist = await _context.EmployeesWorkDays
@@ -54,13 +52,12 @@ namespace Application.CQRS.WorkDay.Command.CreateWorkDay
                 (w => w.WorkDayDate.Day == request.WorkDayDate.Day
                 && w.WorkDayDate.Month == request.WorkDayDate.Month
                 && w.WorkDayDate.Year == request.WorkDayDate.Year
-                && request.EmployeeId == employee.Id , cancellationToken);    
+                && request.EmployeeId == employee.Id, cancellationToken);
 
             if (workDayExist)
             {
-                response.SetError
-                    (409, $"Employee already has working day on {request.WorkDayDate.Date:MM/dd/yyyy}");
-                return response;
+                return response.SetError
+                      (409, $"Employee already has working day on {request.WorkDayDate.Date:MM/dd/yyyy}");
             }
 
             EmployeeWorkDay workDayEntity = _mapper.Map<EmployeeWorkDay>(request);

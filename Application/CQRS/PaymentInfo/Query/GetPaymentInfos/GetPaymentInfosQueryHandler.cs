@@ -37,8 +37,7 @@ namespace Application.CQRS.PaymentInfo.Query.GetPaymentInfos
 
             if (!companyExist)
             {
-                response.SetError(404, "We could not find your company");
-                return response;
+                return response.SetError(404, "We could not find your company");
             }
 
             var employeeExist = await _context
@@ -48,10 +47,8 @@ namespace Application.CQRS.PaymentInfo.Query.GetPaymentInfos
 
             if (!employeeExist)
             {
-                response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
-                return response;
+                return response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
             }
-
 
             var paymentInfos =
                 await _context.EmployeesPaymentInfos
