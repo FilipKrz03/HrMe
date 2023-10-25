@@ -1,5 +1,7 @@
 ﻿using Application.CQRS.WorkDay.Response;
 using AutoMapper;
+using Domain.Abstractions;
+using Domain.Common.Responses;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -14,40 +16,34 @@ namespace Application.CQRS.WorkDay.Query.GetWorkDays
     public class GetWorkDaysQueryHandler : IRequestHandler<GetWorkDaysQuery, Response<IEnumerable<WorkDayResponse>>>
     {
         private readonly IMapper _mapper;
-        private readonly HrMeContext _context;
+        private readonly IComapniesContextRepostiory _companiesContextRepository;   
 
-        public GetWorkDaysQueryHandler(HrMeContext context, IMapper mapper)
+        public GetWorkDaysQueryHandler(HrMeContext context, IMapper mapper , IComapniesContextRepostiory comapniesContextRepostiory)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _companiesContextRepository = comapniesContextRepostiory ??
+                throw new ArgumentNullException(nameof(comapniesContextRepostiory));
         }
 
         public async Task<Response<IEnumerable<WorkDayResponse>>> Handle(GetWorkDaysQuery request, CancellationToken cancellationToken)
         {
-
             Response<IEnumerable<WorkDayResponse>> response = new();
 
-            var companyExist = await _context
-              .Companies
-              .AnyAsync(c => c.Id == request.CompanyId, cancellationToken);
+            EmployeAndCompanyExist exist = await _companiesContextRepository
+                  .EmployeAndCompanyExistAsync(request.CompanyId, request.EmployeeId);
 
-            if (!companyExist)
+            if (!exist.CompanyExist)
             {
                 return response.SetError(404, "We could not find your company");
             }
 
-            var employeeExist = await _context
-                .Employees
-                .AnyAsync(e => e.Id == request.EmployeeId && e.CompanyId == request.CompanyId, cancellationToken);
-
-            if (employeeExist == false)
+            if (!exist.EmployeeExist)
             {
-                return response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
+                return
+                    response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
             }
 
-            var workDays = await _context.EmployeesWorkDays
-                .Where(w => w.EmployeeId == request.EmployeeId)
-                .ToListAsync(cancellationToken);
+            var workDays = await _companiesContextRepository.GetEmployeeWorkDaysAsync(request.EmployeeId);
 
             response.Value = _mapper.Map<IEnumerable<WorkDayResponse>>(workDays);
 

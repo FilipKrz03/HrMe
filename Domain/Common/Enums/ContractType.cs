@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Enums
+namespace Domain.Common.Enums
 {
     public enum ContractType
     {
-        MandatoryContract = 1, 
-        ContractOfEmployment = 2 , 
-        ContractOfEmploymentWithStudentStauts = 3 
+        MandatoryContract = 1,
+        ContractOfEmployment = 2,
+        ContractOfEmploymentWithStudentStauts = 3
     }
 }

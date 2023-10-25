@@ -1,5 +1,5 @@
 ﻿using Application.CQRS.PaymentInfo.Response;
-using Domain.Enums;
+using Domain.Common.Enums;
 using MediatR;
 using System;
 using System.Collections.Generic;
