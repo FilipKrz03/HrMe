@@ -1,4 +1,5 @@
-﻿using Application.CQRS.PaymentInfo.Response;
+﻿using Application.Common;
+using Application.CQRS.PaymentInfo.Response;
 using AutoMapper;
 using Domain.Entities;
 using Infrastructure;
@@ -44,11 +45,22 @@ namespace Application.CQRS.PaymentInfo.Command.CreatePaymentInfo
             var employee = await _context
                 .Employees
                 .Where(e => e.Id == request.EmployeeId && e.CompanyId == request.CompanyId)
+                .Include(p => p.PaymentInfos)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (employee == null)
             {
                 response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
+                return response;
+            }
+
+            bool isPaymantInfoDayRangeAvaliable =
+                 DateTimeExtensions.IsPaymentInfoDateAvaliable
+                 (request.StartOfContractDate, request.EndOfContractDate, employee.PaymentInfos);
+
+            if (isPaymantInfoDayRangeAvaliable == false)
+            {
+                response.SetError(409, "Employee has already contract on requested time range");
                 return response;
             }
 

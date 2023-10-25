@@ -28,9 +28,35 @@ namespace Application.Common
         public static DateOnly ConvertDateTimeOffSetToDateOnly(DateTime date)
         {
             DateOnly dateOnly = new
-                (date.Year , date.Month , date.Day);
+                (date.Year, date.Month, date.Day);
 
             return dateOnly;
+        }
+
+        public static bool IsPaymentInfoDateAvaliable
+            (DateTime start, DateTime? end, IEnumerable<Domain.Entities.EmployeePaymentInfo> paymentInfos)
+        {
+            foreach (Domain.Entities.EmployeePaymentInfo paymentInfo in paymentInfos)
+            {
+
+                if (start <= paymentInfo.EndOfContractDate && end >= paymentInfo.StartOfContractDate)
+                {
+                    return false;
+                }
+
+                if (paymentInfo.EndOfContractDate == null && start >= paymentInfo.StartOfContractDate)
+                {
+                    return false;
+                }
+
+                if (end == null && start <= paymentInfo.EndOfContractDate)
+                {
+                    return false;
+                }
+
+            }
+
+            return true;
         }
     }
 }
