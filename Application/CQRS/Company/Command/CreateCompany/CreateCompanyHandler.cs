@@ -1,5 +1,6 @@
 ﻿using Application.CQRS.Company.Response;
 using AutoMapper;
+using Domain.Abstractions;
 using Domain.Entities;
 using Infrastructure;
 using MediatR;
@@ -14,22 +15,19 @@ namespace Application.CQRS.Company.Command.CreateCompany
 {
     public class CreateCompanyHandler : IRequestHandler<CreateCompanyCommand, Response<string>>
     {
-        private readonly HrMeContext _context;
-        private readonly IMapper _mapper;
 
-        public CreateCompanyHandler(HrMeContext context, IMapper mapper)
+        private readonly ICompanyRepository _comapnyRepository;
+
+        public CreateCompanyHandler(ICompanyRepository companyRepostiory)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _comapnyRepository = companyRepostiory;
         }
 
         public async Task<Response<string>> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
         {
             Response<string> response = new();
 
-            var accountExist =
-                await _context.Companies
-                .AnyAsync(company => company.Email == request.Email, cancellationToken);
+            var accountExist = await _comapnyRepository.CompanyExistByEmailAsync(request.Email);
 
             if (accountExist == false)
             {
@@ -41,9 +39,8 @@ namespace Application.CQRS.Company.Command.CreateCompany
                     Email = request.Email,
                     Password = hashedPwd
                 };
-                _context.Companies.Add(company);
 
-                await _context.SaveChangesAsync(cancellationToken);
+                await _comapnyRepository.InsertCompany(company);
 
                 response.Value = "Company created";
 

@@ -13,14 +13,14 @@ namespace Application.CQRS.Company.Command.LoginCompany
 {
     public class LoginCompanyCommandHandler : IRequestHandler<LoginCompanyCommand, Response<string>>
     {
-        private readonly HrMeContext _context;
-        private readonly IJwtProvider _jwtProvider;
 
-        public LoginCompanyCommandHandler(HrMeContext context, IMapper mapper,
-            IJwtProvider jwtProvider)
+        private readonly IJwtProvider _jwtProvider;
+        private readonly ICompanyRepository _companyRepository;
+
+        public LoginCompanyCommandHandler(IJwtProvider jwtProvider, ICompanyRepository companyRepository)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _jwtProvider = jwtProvider ?? throw new ArgumentNullException(nameof(jwtProvider));
+            _jwtProvider = jwtProvider;
+            _companyRepository = companyRepository; 
         }
 
         public async Task<Response<string>> Handle(LoginCompanyCommand request, CancellationToken cancellationToken)
@@ -28,9 +28,7 @@ namespace Application.CQRS.Company.Command.LoginCompany
 
             Response<string> response = new();
 
-            var company = await _context.Companies
-                .Where(c => c.Email == request.Email)
-                .FirstOrDefaultAsync(cancellationToken);
+            var company = await _companyRepository.GetCompanyByEmailAsync(request.Email);
 
             if (company == null)
             {
