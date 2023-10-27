@@ -1,5 +1,6 @@
 ﻿using Application.CQRS.Employee.Response;
 using AutoMapper;
+using Domain.Abstractions;
 using Domain.Entities;
 using Infrastructure;
 using MediatR;
@@ -14,43 +15,43 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
 {
     public class CreateEmployeeComandHandler : IRequestHandler<CreateEmployeeCommand, Response<EmployeeResponse>>
     {
-        private readonly HrMeContext _context;
+ 
         private readonly IMapper _mapper;
-        public CreateEmployeeComandHandler(HrMeContext context, IMapper mapper)
+        private readonly IEmployeeRepository _employeeRepository;
+        private readonly ICompanyRepository _companyRepository;
+        public CreateEmployeeComandHandler(IMapper mapper, ICompanyRepository companyRepository, 
+            IEmployeeRepository employeeRepository)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _mapper = mapper;
+            _companyRepository = companyRepository;
+            _employeeRepository = employeeRepository;
         }
         public async Task<Response<EmployeeResponse>> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
         {
             Response<EmployeeResponse> response = new();
 
-            var employeeCompany = await _context.Companies
-                .Where(c => c.Id == request.CompanyGuid)
-                .Include(c => c.Employees)
-                .FirstOrDefaultAsync(cancellationToken);
+            var employeeCompany = await _companyRepository.CompanyExistAsync(request.CompanyGuid);
 
-            if (employeeCompany == null)
+            if (employeeCompany == false)
             {
                 return response.SetError(500, "We occured some unexpected error");
             }
 
-            var employeeExist = await _context.Employees
-                 .Where(e => e.Email == request.Email)
-                 .FirstOrDefaultAsync(cancellationToken);
+            var employeeExist = await _employeeRepository.
+                EmployeExistByEmaiInCompanylAsync(request.Email , request.CompanyGuid);
 
-            if (employeeExist != null)
+            if (employeeExist != false)
             {
                 return response.SetError(409,
-                    $"The employe already exist in our database , and works in {employeeExist.Company.CompanyName} company");
+                    $"The employe with email {request.Email} already exist in your company");
             }
 
             Domain.Entities.Employee employee
                 = _mapper.Map<Domain.Entities.Employee>(request);
 
-            employeeCompany.Employees.Add(employee);
+            employee.CompanyId = request.CompanyGuid;
 
-            await _context.SaveChangesAsync(cancellationToken);
+            await _employeeRepository.InsertEmployee(employee);
 
             response.Value = _mapper.Map<EmployeeResponse>(employee);
 

@@ -1,5 +1,6 @@
 ﻿using Application.CQRS.Employee.Response;
 using AutoMapper;
+using Domain.Abstractions;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -13,31 +14,29 @@ namespace Application.CQRS.Employee.Query.GetEmployee
 {
     public class GetEmployeeQueryHandler : IRequestHandler<GetEmployeeQuery, Response<EmployeeResponse>>
     {
-        private readonly HrMeContext _context;
         private readonly IMapper _mapper;
+        private readonly IEmployeeRepository _employeeRepository;
+        private readonly ICompanyRepository _companyRepository;
 
-        public GetEmployeeQueryHandler(HrMeContext context, IMapper mapper)
+        public GetEmployeeQueryHandler(IMapper mapper , ICompanyRepository companyRepository ,
+            IEmployeeRepository employeeRepository)
         {
-            _context = context ??
-                throw new ArgumentNullException(nameof(context));
-            _mapper = mapper ??
-                throw new ArgumentNullException(nameof(mapper));
+            _mapper = mapper;
+            _companyRepository = companyRepository;
+            _employeeRepository = employeeRepository;
         }
         public async Task<Response<EmployeeResponse>> Handle(GetEmployeeQuery request, CancellationToken cancellationToken)
         {
             Response<EmployeeResponse> response = new();
 
-            var comapnyExist = await _context.Companies
-                .AnyAsync(e => e.Id == request.CompanyId, cancellationToken);
+            var comapnyExist = await _companyRepository.CompanyExistAsync(request.CompanyId);
 
             if (!comapnyExist)
             {
                 return response.SetError(404, "We could not found your company in database");
             }
 
-            var employee = await _context.Employees
-                .Where(e => e.Id == request.EmployeeId && e.CompanyId == request.CompanyId)
-                .FirstOrDefaultAsync(cancellationToken);
+            var employee = await _employeeRepository.GetEmployeeAsync(request.EmployeeId , request.CompanyId);
 
             if (employee == null)
             {

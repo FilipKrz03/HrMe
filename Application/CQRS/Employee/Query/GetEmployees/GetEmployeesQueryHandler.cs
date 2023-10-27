@@ -1,6 +1,7 @@
 ﻿using Application.CQRS.Employee.Response;
 using AutoMapper;
 using Azure;
+using Domain.Abstractions;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -14,15 +15,17 @@ namespace Application.CQRS.Employee.Query.GetEmployees
 {
     public class GetEmployeesQueryHandler : IRequestHandler<GetEmployeesQuery, Response<IEnumerable<EmployeeResponse>>>
     {
-        private readonly HrMeContext _context;
-        private readonly IMapper _mapper;
 
-        public GetEmployeesQueryHandler(HrMeContext context, IMapper mapper)
+        private readonly IMapper _mapper;
+        private readonly IEmployeeRepository _employeeRepository;
+        private readonly ICompanyRepository _companyRepository;
+
+        public GetEmployeesQueryHandler(IMapper mapper, ICompanyRepository companyRepository, 
+            IEmployeeRepository employeeRepository)
         {
-            _context = context ??
-                throw new ArgumentNullException(nameof(context));
-            _mapper = mapper ??
-                throw new ArgumentNullException(nameof(mapper));
+            _mapper = mapper;
+            _companyRepository = companyRepository;
+            _employeeRepository = employeeRepository;
         }
 
         public async Task<Response<IEnumerable<EmployeeResponse>>>
@@ -30,17 +33,14 @@ namespace Application.CQRS.Employee.Query.GetEmployees
         {
             Response<IEnumerable<EmployeeResponse>> response = new();
 
-            var comapnyExist = await _context.Companies
-              .AnyAsync(e => e.Id == request.CompanyId, cancellationToken);
+            var comapnyExist = await _companyRepository.CompanyExistAsync(request.CompanyId);
 
             if (!comapnyExist)
             {
                 return response.SetError(404, "We could not found your company in database");
             }
 
-            var employeList = await _context.Employees
-                .Where(e => e.CompanyId == request.CompanyId)
-                .ToListAsync();
+            var employeList = await _employeeRepository.GetEmployeesAsync(request.CompanyId);
 
             response.Value = _mapper.Map<IEnumerable<EmployeeResponse>>(employeList);
 
