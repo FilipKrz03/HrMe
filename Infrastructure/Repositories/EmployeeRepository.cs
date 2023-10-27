@@ -18,16 +18,24 @@ namespace Infrastructure.Repositories
             return await EntityExistAsync(employeeId);
         }
 
-        public async Task<bool> EmployeExistByEmaiInCompanylAsync(string email , Guid companyId)
+        public async Task<bool> EmployeeExistsInCompanyAsync(Guid employeeId, Guid companyId)
         {
-            return await Query.
-                AnyAsync(e => e.Email == email && e.CompanyId == companyId);
+            return await GetByIdQuery(employeeId)
+                .AnyAsync(e => e.CompanyId == companyId);
         }
 
-        public Task<Employee?> GetEmployeeAsync(Guid employeeId, Guid companyId)
+        public async Task<bool> EmployeExistWithEmailInCompanyAsync(string email, Guid companyId)
         {
-            return GetByIdQuery(employeeId)
+            return await Query
+                .AnyAsync(e => e.Email == email && e.CompanyId == companyId);
+        }
+
+        public async Task<Employee?> GetEmployeeAsync(Guid employeeId, Guid companyId)
+        {
+            return await GetByIdQuery(employeeId)
                 .Where(e => e.CompanyId == companyId)
+                .Include(e => e.PaymentInfos)
+                .Include(e => e.WorkDays)
                 .FirstOrDefaultAsync();
         }
 

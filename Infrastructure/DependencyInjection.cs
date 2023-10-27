@@ -30,6 +30,7 @@ namespace Infrastructure
             services.AddScoped<ICompanyRepository, CompanyRepostiory>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IWorkDayReposiotry, WorkDayRepository>();
+            services.AddScoped<IPaymentInfoRepository, PaymentInfoRepository>();
 
             return services;
         }

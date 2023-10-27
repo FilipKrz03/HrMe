@@ -1,6 +1,7 @@
 ﻿using Application.Common;
 using Application.CQRS.PaymentInfo.Response;
 using AutoMapper;
+using Domain.Abstractions;
 using Domain.Entities;
 using Infrastructure;
 using MediatR;
@@ -16,15 +17,18 @@ namespace Application.CQRS.PaymentInfo.Command.CreatePaymentInfo
     public class CreatePaymentInfoCommandHandler : IRequestHandler<CreatePaymentInfoCommand, Response<PaymentInfoResponse>>
     {
 
-        private readonly HrMeContext _context;
         private readonly IMapper _mapper;
+        private readonly ICompanyRepository _companyRepository;
+        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IPaymentInfoRepository _paymentInfoRepository;
 
-        public CreatePaymentInfoCommandHandler(HrMeContext context, IMapper mapper)
+        public CreatePaymentInfoCommandHandler(IMapper mapper , IEmployeeRepository employeeRepository , 
+            ICompanyRepository companyRepository , IPaymentInfoRepository paymentInfoRepository )
         {
-            _mapper = mapper ??
-                throw new ArgumentNullException(nameof(mapper));
-            _context = context ??
-                throw new ArgumentNullException(nameof(context));
+            _mapper = mapper;
+            _employeeRepository = employeeRepository;
+            _companyRepository = companyRepository;
+            _paymentInfoRepository = paymentInfoRepository;
         }
 
         public async Task<Response<PaymentInfoResponse>>
@@ -32,20 +36,14 @@ namespace Application.CQRS.PaymentInfo.Command.CreatePaymentInfo
         {
             Response<PaymentInfoResponse> response = new();
 
-            var companyExist = await _context
-                .Companies
-                .AnyAsync(c => c.Id == request.CompanyId, cancellationToken);
+            var companyExist = await _companyRepository.CompanyExistAsync(request.CompanyId);   
 
             if (!companyExist)
             {
                 return response.SetError(404, "We could not find your company");
             }
 
-            var employee = await _context
-                .Employees
-                .Where(e => e.Id == request.EmployeeId && e.CompanyId == request.CompanyId)
-                .Include(p => p.PaymentInfos)
-                .FirstOrDefaultAsync(cancellationToken);
+            var employee = await _employeeRepository.GetEmployeeAsync(request.EmployeeId , request.CompanyId);
 
             if (employee == null)
             {
@@ -63,9 +61,9 @@ namespace Application.CQRS.PaymentInfo.Command.CreatePaymentInfo
 
             EmployeePaymentInfo paymentInfoEntity = _mapper.Map<EmployeePaymentInfo>(request);
 
-            employee.PaymentInfos.Add(paymentInfoEntity);
+            paymentInfoEntity.EmployeeId = request.EmployeeId;
 
-            await _context.SaveChangesAsync(cancellationToken);
+            await _paymentInfoRepository.InsertPaymentInfo(paymentInfoEntity);
 
             response.Value = _mapper.Map<PaymentInfoResponse>(paymentInfoEntity);
 

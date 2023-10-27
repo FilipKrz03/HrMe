@@ -37,9 +37,9 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
                 return response.SetError(500, "We occured some unexpected error");
             }
 
-            var employeeExist = await _employeeRepository.
-                EmployeExistByEmaiInCompanylAsync(request.Email , request.CompanyGuid);
-
+            var employeeExist = await _employeeRepository
+                .EmployeExistWithEmailInCompanyAsync(request.Email, request.CompanyGuid);
+  
             if (employeeExist != false)
             {
                 return response.SetError(409,

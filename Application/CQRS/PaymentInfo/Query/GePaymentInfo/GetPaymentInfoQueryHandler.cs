@@ -1,6 +1,7 @@
 ﻿using Application.CQRS.PaymentInfo.Response;
 using AutoMapper;
 using Azure;
+using Domain.Abstractions;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -15,44 +16,41 @@ namespace Application.CQRS.PaymentInfo.Query.GePaymentInfo
     public class GetPaymentInfoQueryHandler : IRequestHandler<GetPaymentInfoQuery, Response<PaymentInfoResponse>>
     {
 
-        private readonly HrMeContext _context;
         private readonly IMapper _mapper;
+        private readonly ICompanyRepository _companyRepository;
+        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IPaymentInfoRepository _paymentInfoRepository;
 
-        public GetPaymentInfoQueryHandler(HrMeContext context, IMapper mapper)
+        public GetPaymentInfoQueryHandler(IMapper mapper, ICompanyRepository companyRepository,
+            IEmployeeRepository employeeRepository, IPaymentInfoRepository paymentInfoRepository)
         {
-            _mapper = mapper ??
-                throw new ArgumentNullException(nameof(mapper));
-            _context = context ??
-                throw new ArgumentNullException(nameof(context));
+            _mapper = mapper;
+            _companyRepository = companyRepository;
+            _employeeRepository = employeeRepository;
+            _paymentInfoRepository = paymentInfoRepository;
         }
 
         public async Task<Response<PaymentInfoResponse>> Handle(GetPaymentInfoQuery request, CancellationToken cancellationToken)
         {
             Response<PaymentInfoResponse> response = new();
 
-
-            var companyExist = await _context
-              .Companies
-              .AnyAsync(c => c.Id == request.CompanyId, cancellationToken);
+            var companyExist = await _companyRepository.CompanyExistAsync(request.CompanyId);
 
             if (!companyExist)
             {
                 return response.SetError(404, "We could not find your company");
             }
 
-            var employeeExist = await _context
-                   .Employees
-                   .AnyAsync(e => e.Id == request.EmployeeId && e.CompanyId == request.CompanyId, cancellationToken);
-
+            var employeeExist = await _employeeRepository
+                .EmployeeExistsInCompanyAsync(request.EmployeeId, request.CompanyId);
 
             if (!employeeExist)
             {
                 return response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
             }
 
-            var paymentInfo = await _context.EmployeesPaymentInfos
-                .Where(p => p.Id == request.PaymentId && p.EmployeeId == request.EmployeeId)
-                .FirstOrDefaultAsync(cancellationToken);
+            var paymentInfo = await _paymentInfoRepository
+                .GetPaymentInfo(request.PaymentId, request.EmployeeId);
 
             if (paymentInfo == null)
             {
