@@ -8,11 +8,8 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Employee
+    public class Employee : BaseEntity
     {
-        [Key]
-        public Guid Id { get; set; }
-
         [Required]
         public string FirstName { get; set; } = string.Empty;
 

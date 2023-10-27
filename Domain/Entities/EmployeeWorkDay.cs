@@ -8,11 +8,8 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class EmployeeWorkDay
-    {
-        [Key]
-        public Guid Id { get; set; }   
-        
+    public class EmployeeWorkDay : BaseEntity
+    {        
         public DateTime WorkDayDate { get; set; } 
 
         public int StartTimeInMinutesAfterMidnight {  get; set; }

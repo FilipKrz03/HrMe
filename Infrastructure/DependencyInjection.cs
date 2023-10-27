@@ -27,7 +27,9 @@ namespace Infrastructure
 
             services.AddSingleton<IJwtProvider, JwtProvider>();
 
-            services.AddScoped<IComapniesContextRepostiory, ComapniesContexRepostiory>();
+            services.AddScoped<ICompanyRepository, CompanyRepostiory>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IWorkDayReposiotry, WorkDayRepository>();
 
             return services;
         }

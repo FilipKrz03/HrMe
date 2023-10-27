@@ -18,35 +18,36 @@ namespace Application.CQRS.WorkDay.Command.CreateWorkDay
     {
 
         private readonly IMapper _mapper;
-        private readonly IComapniesContextRepostiory _companiesContextRepostiory;
+        private readonly ICompanyRepository _companyRepository;
+        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IWorkDayReposiotry _workDayReposiotry;
 
         public CreateWorkDayCommandHandler
-            (IMapper mapper, IComapniesContextRepostiory comapniesContexRepostiory)
+            (IMapper mapper , ICompanyRepository companyRepository ,
+            IEmployeeRepository employeeRepostiory, IWorkDayReposiotry workDayReposiotry)
         {
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _companiesContextRepostiory = comapniesContexRepostiory ??
-                throw new ArgumentNullException(nameof(comapniesContexRepostiory));
+            _mapper = mapper;
+            _companyRepository = companyRepository;
+            _employeeRepository = employeeRepostiory;
+            _workDayReposiotry = workDayReposiotry; 
         }
 
         public async Task<Response<WorkDayResponse>> Handle(CreateWorkDayCommand request, CancellationToken cancellationToken)
         {
             Response<WorkDayResponse> response = new();
 
-            EmployeAndCompanyExist exist = await _companiesContextRepostiory
-                .EmployeAndCompanyExistAsync(request.CompanyId, request.EmployeeId);
-
-            if (!exist.CompanyExist)
+            if (! await _companyRepository.CompanyExistAsync(request.CompanyId))
             {
                 return response.SetError(404, "We could not find your company");
             }
 
-            if (!exist.EmployeeExist)
+            if (! await _employeeRepository.EmployeeExistAsync(request.EmployeeId))
             {
                 return response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
             }
 
-            var workDayExist = await _companiesContextRepostiory
-                .EmployeeWorkDayExistAsync(request.WorkDayDate, request.EmployeeId);
+            var workDayExist = await _workDayReposiotry
+                .WorkDayExistAsync(request.WorkDayDate, request.EmployeeId);
 
             if (workDayExist)
             {
@@ -56,9 +57,9 @@ namespace Application.CQRS.WorkDay.Command.CreateWorkDay
 
             EmployeeWorkDay workDayEntity = _mapper.Map<EmployeeWorkDay>(request);
 
-            _companiesContextRepostiory.CreateWorkDay(request.EmployeeId, workDayEntity);
+            workDayEntity.EmployeeId = request.EmployeeId;
 
-            await _companiesContextRepostiory.SaveChangesAsync();
+            await _workDayReposiotry.InsertWorkDay(workDayEntity);
 
             response.Value = _mapper.Map<WorkDayResponse>(workDayEntity);
 

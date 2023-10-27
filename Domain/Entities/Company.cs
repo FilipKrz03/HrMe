@@ -7,11 +7,9 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Company
+    public class Company : BaseEntity
     {
-        [Key]
-        public Guid Id { get; set; }
-
+     
         [Required]
         public string CompanyName { get; set; } = string.Empty;
 

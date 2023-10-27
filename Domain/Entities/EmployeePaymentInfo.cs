@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class EmployeePaymentInfo
+    public class EmployeePaymentInfo : BaseEntity
     {
-        public Guid Id { get; set; }
-
         public double HourlyRateBrutto { get; set; }
 
         public ContractType ContractType { get; set; }

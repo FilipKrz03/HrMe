@@ -15,37 +15,39 @@ namespace Application.CQRS.WorkDay.Query.GetWorkDay
 {
     public class GetWorkDayQueryHandler : IRequestHandler<GetWorkDayQuery, Response<WorkDayResponse>>
     {
+
         private readonly IMapper _mapper;
-        private readonly IComapniesContextRepostiory _companiesContextRepository;
+        private readonly IWorkDayReposiotry _workDayRepository;
+        private readonly ICompanyRepository _companyRepository;
+        private readonly IEmployeeRepository _employeeRepository;
 
         public GetWorkDayQueryHandler
-            (IMapper mapper, IComapniesContextRepostiory comapniesContextRepostiory)
+            (IMapper mapper,IWorkDayReposiotry workDayRepository
+            , ICompanyRepository companyRepository, IEmployeeRepository employeeRepository)
         {
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _companiesContextRepository = comapniesContextRepostiory ??
-                throw new ArgumentNullException(nameof(comapniesContextRepostiory));
+            _mapper = mapper;
+            _workDayRepository = workDayRepository;
+            _companyRepository = companyRepository;
+            _employeeRepository = employeeRepository;   
         }
 
         public async Task<Response<WorkDayResponse>> Handle(GetWorkDayQuery request, CancellationToken cancellationToken)
         {
             Response<WorkDayResponse> response = new();
 
-            EmployeAndCompanyExist exist = await _companiesContextRepository
-                .EmployeAndCompanyExistAsync(request.CompanyId, request.EmployeeId);
-
-            if (!exist.CompanyExist)
+            if (!await _companyRepository.CompanyExistAsync(request.CompanyId))
             {
                 return response.SetError(404, "We could not find your company");
             }
 
-            if (!exist.EmployeeExist)
+            if (! await _employeeRepository.EmployeeExistAsync(request.EmployeeId))
             {
                 return
                     response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
             }
 
-            var workDay = await _companiesContextRepository
-                .GetEmployeeWorkDayAsync(request.EmployeeId, request.WorkDayId);
+            var workDay = await _workDayRepository
+                .GetWorkDayAsync(request.WorkDayId , request.EmployeeId);
 
             if (workDay == null)
             {
