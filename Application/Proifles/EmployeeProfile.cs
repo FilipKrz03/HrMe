@@ -2,6 +2,7 @@
 using Application.CQRS.Employee.Command.CreateEmployee;
 using Application.CQRS.Employee.Response;
 using AutoMapper;
+using Infrastructure.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,8 @@ namespace Application.Proifles
                 .ForMember(dest => dest.Position, opt => opt.MapFrom(src => src.Position))
                 .ForMember(dest => dest.Age, opt =>
                 opt.MapFrom(src => DateTimeExtensions.CalculateAge(src.DateOfBirth)));
+
+            
         }
     }
 }

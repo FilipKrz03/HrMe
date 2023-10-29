@@ -5,6 +5,8 @@ using Application.CQRS.Employee.Query.GetEmployee;
 using Application.CQRS.Employee.Query.GetEmployees;
 using Application.CQRS.Employee.Response;
 using Domain.Abstractions;
+using Domain.Common;
+using Infrastructure.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text.Json;
 using Web.Services;
 
 namespace Web.Controllers
@@ -63,16 +66,33 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Response<IEnumerable<EmployeeResponse>>>> GetEmployees()
+        public async Task<ActionResult<Response<PagedList<EmployeeResponse>>>> 
+            GetEmployees([FromQuery] ResourceParameters resourceParameters)
         {
             var companyGuid = _userService.GetUserId();
             
-            GetEmployeesQuery query = new(companyGuid);
+            GetEmployeesQuery query = new(companyGuid , resourceParameters);
 
-            Response<IEnumerable<EmployeeResponse>> result = await _mediator.Send(query);
+            Response<PagedList<EmployeeResponse>> result = await _mediator.Send(query);
 
-            return result.IsError == true ? StatusCode(result.StatusCode, result.Message)
-                : Ok(result.Value);
+            if(result.IsError == true)
+            {
+                return StatusCode(result.StatusCode, result.Message);
+            }
+
+            var paginationMetadata = new
+            {
+                totalCount = result.Value!.TotalCount,
+                pageSize = result.Value!.PageSize,
+                pageNumber = result.Value!.PageNumber,
+                hasPrevious = result.Value!.HasPrevios , 
+                hasNext = result.Value!.HasNext , 
+            };
+
+            Response.Headers.Add("X-Pagination",
+                JsonSerializer.Serialize(paginationMetadata));
+
+            return Ok(result.Value);
         }
     }
 }

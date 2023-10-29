@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Domain.Common;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,6 @@ namespace Domain.Abstractions
 
         Task<Employee?> GetEmployeeAsync(Guid employeeId , Guid companyId);
 
-        Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId);
+        Task<IPagedList<Employee>> GetEmployeesAsync(Guid companyId, ResourceParameters resourceParameters);
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Application.CQRS.Employee.Response;
+using Domain.Common;
+using Infrastructure.Common;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,13 +10,16 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Employee.Query.GetEmployees
 {
-    public class GetEmployeesQuery : IRequest<Response<IEnumerable<EmployeeResponse>>>
+    public class GetEmployeesQuery : IRequest<Response<PagedList<EmployeeResponse>>>
     {
         public Guid CompanyId;
 
-        public GetEmployeesQuery(Guid companyId)
+        public ResourceParameters ResourceParameters;
+
+        public GetEmployeesQuery(Guid companyId, ResourceParameters resourceParameters)
         {
-            CompanyId = companyId;            
+            CompanyId = companyId;
+            ResourceParameters = resourceParameters;
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Application.CQRS.WorkDay.Response;
 using AutoMapper;
 using Domain.Abstractions;
-using Domain.Common.Responses;
 using Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

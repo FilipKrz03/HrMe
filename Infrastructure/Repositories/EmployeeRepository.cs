@@ -1,5 +1,7 @@
 ﻿using Domain.Abstractions;
+using Domain.Common;
 using Domain.Entities;
+using Infrastructure.Common;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class EmployeeRepository : BaseRepository<Employee> , IEmployeeRepository
+    public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
     {
         public EmployeeRepository(HrMeContext context) : base(context) { }
 
@@ -39,16 +41,18 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId)
+        public async Task<IPagedList<Employee>> 
+            GetEmployeesAsync(Guid companyId, ResourceParameters resourceParameters)
         {
-            return await Query
-                 .Where(e => e.CompanyId == companyId)
-                 .ToListAsync();
+            return await PagedList<Employee>
+                .CreateAsync(Query
+                 .Where(e => e.CompanyId == companyId),
+                 resourceParameters.PageNumber, resourceParameters.PageSize);
         }
 
         public async Task InsertEmployee(Employee employee)
         {
-           await Insert(employee);
+            await Insert(employee);
         }
     }
 }

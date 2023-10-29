@@ -3,6 +3,7 @@ using AutoMapper;
 using Azure;
 using Domain.Abstractions;
 using Infrastructure;
+using Infrastructure.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Employee.Query.GetEmployees
 {
-    public class GetEmployeesQueryHandler : IRequestHandler<GetEmployeesQuery, Response<IEnumerable<EmployeeResponse>>>
+    public class GetEmployeesQueryHandler : IRequestHandler<GetEmployeesQuery, Response<PagedList<EmployeeResponse>>>
     {
 
         private readonly IMapper _mapper;
@@ -28,10 +29,10 @@ namespace Application.CQRS.Employee.Query.GetEmployees
             _employeeRepository = employeeRepository;
         }
 
-        public async Task<Response<IEnumerable<EmployeeResponse>>>
+        public async Task<Response<PagedList<EmployeeResponse>>>
             Handle(GetEmployeesQuery request, CancellationToken cancellationToken)
         {
-            Response<IEnumerable<EmployeeResponse>> response = new();
+            Response<PagedList<EmployeeResponse>> response = new();
 
             var comapnyExist = await _companyRepository.CompanyExistAsync(request.CompanyId);
 
@@ -40,9 +41,9 @@ namespace Application.CQRS.Employee.Query.GetEmployees
                 return response.SetError(404, "We could not found your company in database");
             }
 
-            var employeList = await _employeeRepository.GetEmployeesAsync(request.CompanyId);
+            var employeList = await _employeeRepository.GetEmployeesAsync(request.CompanyId, request.ResourceParameters);
 
-            response.Value = _mapper.Map<IEnumerable<EmployeeResponse>>(employeList);
+            response.Value = _mapper.Map<PagedList<EmployeeResponse>>(employeList);
 
             return response;
         }
