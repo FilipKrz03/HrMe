@@ -2,6 +2,7 @@
 using AutoMapper;
 using Domain.Abstractions;
 using Infrastructure;
+using Infrastructure.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.WorkDay.Query.GetWorkDays
 {
-    public class GetWorkDaysQueryHandler : IRequestHandler<GetWorkDaysQuery, Response<IEnumerable<WorkDayResponse>>>
+    public class GetWorkDaysQueryHandler : IRequestHandler<GetWorkDaysQuery, Response<PagedList<WorkDayResponse>>>
     {
         private readonly IMapper _mapper; 
         private readonly ICompanyRepository _companyRepository;
@@ -28,9 +29,9 @@ namespace Application.CQRS.WorkDay.Query.GetWorkDays
             _workDayRepository = workDayRepository;     
         }
 
-        public async Task<Response<IEnumerable<WorkDayResponse>>> Handle(GetWorkDaysQuery request, CancellationToken cancellationToken)
+        public async Task<Response<PagedList<WorkDayResponse>>> Handle(GetWorkDaysQuery request, CancellationToken cancellationToken)
         {
-            Response<IEnumerable<WorkDayResponse>> response = new();
+            Response<PagedList<WorkDayResponse>> response = new();
 
             if (! await _companyRepository.CompanyExistAsync(request.CompanyId))
             {
@@ -43,9 +44,9 @@ namespace Application.CQRS.WorkDay.Query.GetWorkDays
                     response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
             }
 
-            var workDays = await _workDayRepository.GetWorkDaysAsync(request.EmployeeId);
+            var workDays = await _workDayRepository.GetWorkDaysAsync(request.EmployeeId, request.ResourceParameters);
 
-            response.Value = _mapper.Map<IEnumerable<WorkDayResponse>>(workDays);
+            response.Value = _mapper.Map<PagedList<WorkDayResponse>>(workDays);
 
             return response;
         }

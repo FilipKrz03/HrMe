@@ -4,11 +4,14 @@ using Application.CQRS.PaymentInfo.Query.GePaymentInfo;
 using Application.CQRS.PaymentInfo.Query.GetPaymentInfos;
 using Application.CQRS.PaymentInfo.Response;
 using Domain.Abstractions;
+using Domain.Common;
+using Infrastructure.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Sprache;
+using System.Text.Json;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Web.Controllers
@@ -64,16 +67,34 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Response<IEnumerable<PaymentInfoResponse>>>> GetPaymentInfos(Guid employeeId)
+        public async Task<ActionResult<Response<PagedList<PaymentInfoResponse>>>>
+            GetPaymentInfos(Guid employeeId , [FromQuery]ResourceParameters resourceParameters)
         {
             var companyId = _userService.GetUserId();
 
-            GetPaymentInfosQuery query = new(companyId, employeeId);
+            GetPaymentInfosQuery query = new(companyId, employeeId , resourceParameters);
 
-            Response<IEnumerable<PaymentInfoResponse>> result = await _mediator.Send(query);
+            Response<PagedList<PaymentInfoResponse>> result = await _mediator.Send(query);
 
-            return result.IsError == true ? StatusCode(result.StatusCode, result.Message)
-                : Ok(result.Value);
+            if(result.IsError == true)
+            {
+                return StatusCode(result.StatusCode, result.Message);
+            }
+
+            var paginationMetadata = new
+            {
+                totalCount = result.Value!.TotalCount,
+                pageSize = result.Value!.PageSize,
+                pageNumber = result.Value!.PageNumber,
+                hasPrevious = result.Value!.HasPrevios,
+                hasNext = result.Value!.HasNext,
+                totalPages = result.Value!.TotalPages,  
+            };
+
+            Response.Headers.Add("X-Pagination",
+                JsonSerializer.Serialize(paginationMetadata));
+
+            return Ok(result.Value);
         }
     }
 }

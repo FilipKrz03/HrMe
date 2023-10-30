@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Domain.Common;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,6 @@ namespace Domain.Abstractions
 
         Task<EmployeeWorkDay?> GetWorkDayAsync(Guid workDayId , Guid employeeId);
 
-        Task<IEnumerable<EmployeeWorkDay>> GetWorkDaysAsync(Guid employeeId);
+        Task<IPagedList<EmployeeWorkDay>> GetWorkDaysAsync(Guid employeeId , ResourceParameters resourceParameters);
     }
 }

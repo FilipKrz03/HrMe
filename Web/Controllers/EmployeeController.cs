@@ -86,7 +86,8 @@ namespace Web.Controllers
                 pageSize = result.Value!.PageSize,
                 pageNumber = result.Value!.PageNumber,
                 hasPrevious = result.Value!.HasPrevios , 
-                hasNext = result.Value!.HasNext , 
+                hasNext = result.Value!.HasNext ,
+                totalPages = result.Value!.TotalPages,
             };
 
             Response.Headers.Add("X-Pagination",

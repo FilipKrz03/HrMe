@@ -3,6 +3,7 @@ using AutoMapper;
 using Azure;
 using Domain.Abstractions;
 using Infrastructure;
+using Infrastructure.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.PaymentInfo.Query.GetPaymentInfos
 {
-    public class GetPaymentInfosQueryHandler : IRequestHandler<GetPaymentInfosQuery, Response<IEnumerable<PaymentInfoResponse>>>
+    public class GetPaymentInfosQueryHandler : IRequestHandler<GetPaymentInfosQuery, Response<PagedList<PaymentInfoResponse>>>
     {
 
         private readonly IMapper _mapper;
@@ -30,10 +31,10 @@ namespace Application.CQRS.PaymentInfo.Query.GetPaymentInfos
             _paymentInfoRepository = paymentInfoRepository;
         }
 
-        public async Task<Response<IEnumerable<PaymentInfoResponse>>>
+        public async Task<Response<PagedList<PaymentInfoResponse>>>
             Handle(GetPaymentInfosQuery request, CancellationToken cancellationToken)
         {
-            Response<IEnumerable<PaymentInfoResponse>> response = new();
+            Response<PagedList<PaymentInfoResponse>> response = new();
 
             var companyExist = await _companyRepository.CompanyExistAsync(request.CompanyId);
 
@@ -50,9 +51,9 @@ namespace Application.CQRS.PaymentInfo.Query.GetPaymentInfos
                 return response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
             }
 
-            var paymentInfos = await _paymentInfoRepository.GetPaymentInfos(request.EmployeeId);
+            var paymentInfos = await _paymentInfoRepository.GetPaymentInfos(request.EmployeeId , request.ResourceParameters);
 
-            response.Value = _mapper.Map<IEnumerable<PaymentInfoResponse>>(paymentInfos);
+            response.Value = _mapper.Map<PagedList<PaymentInfoResponse>>(paymentInfos);
 
             return response;
         }

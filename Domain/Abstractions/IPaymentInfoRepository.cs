@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Domain.Common;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,6 @@ namespace Domain.Abstractions
 
         Task<EmployeePaymentInfo?> GetPaymentInfo(Guid paymentInfoId, Guid employeeId);
 
-        Task<IEnumerable<EmployeePaymentInfo>> GetPaymentInfos(Guid employeeId); 
+        Task<IPagedList<EmployeePaymentInfo>> GetPaymentInfos(Guid employeeId , ResourceParameters resourceParameters); 
     }
 }

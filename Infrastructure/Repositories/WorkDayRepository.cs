@@ -1,5 +1,7 @@
 ﻿using Domain.Abstractions;
+using Domain.Common;
 using Domain.Entities;
+using Infrastructure.Common;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -21,11 +23,13 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<EmployeeWorkDay>> GetWorkDaysAsync(Guid employeeId)
+        public async Task<IPagedList<EmployeeWorkDay>>
+            GetWorkDaysAsync(Guid employeeId , ResourceParameters resourceParameters)
         {
-            return await Query
-                .Where(w => w.EmployeeId == employeeId)
-                .ToListAsync();
+            return await PagedList<EmployeeWorkDay>
+                .CreateAsync(Query
+                .Where(w => w.EmployeeId == employeeId),
+                resourceParameters.PageNumber, resourceParameters.PageSize);
         }
 
         public async Task InsertWorkDay(EmployeeWorkDay employeeWorkDay)

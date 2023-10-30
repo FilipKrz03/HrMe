@@ -1,5 +1,7 @@
 ﻿using Domain.Abstractions;
+using Domain.Common;
 using Domain.Entities;
+using Infrastructure.Common;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,11 +22,13 @@ namespace Infrastructure.Repositories
                  .FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<EmployeePaymentInfo>> GetPaymentInfos(Guid employeeId)
+        public async Task<IPagedList<EmployeePaymentInfo>>
+            GetPaymentInfos(Guid employeeId , ResourceParameters resourceParameters)
         {
-            return await Query
-                .Where(p => p.EmployeeId == employeeId)
-                .ToListAsync();
+            return await PagedList<EmployeePaymentInfo>
+                .CreateAsync(Query
+                .Where(p => p.EmployeeId == employeeId),
+                resourceParameters.PageNumber, resourceParameters.PageSize);
         }
 
         public async Task InsertPaymentInfo(EmployeePaymentInfo paymentInfo)
