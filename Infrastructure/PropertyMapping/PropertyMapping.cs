@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Services
+namespace Infrastructure.PropertyMapping
 {
     public interface IPropertyMapping { }
     public class PropertyMapping<TSource , TDestination> : IPropertyMapping

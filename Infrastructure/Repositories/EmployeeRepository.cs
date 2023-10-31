@@ -3,7 +3,7 @@ using Domain.Common;
 using Domain.Entities;
 using Domain.Responses;
 using Infrastructure.Common;
-using Infrastructure.Services;
+using Infrastructure.PropertyMapping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;

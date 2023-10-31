@@ -1,8 +1,11 @@
 ﻿using Domain.Abstractions;
 using Domain.Common;
 using Domain.Entities;
+using Domain.Responses;
 using Infrastructure.Common;
+using Infrastructure.PropertyMapping;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +17,13 @@ namespace Infrastructure.Repositories
     public class WorkDayRepository : BaseRepository<EmployeeWorkDay>, IWorkDayReposiotry
     {
 
-        public WorkDayRepository(HrMeContext context) : base(context) { }
+        private readonly IPropertyMappingService _propertyMappingService;
+
+        public WorkDayRepository
+            (HrMeContext context , IPropertyMappingService propertyMappingService) : base(context)
+        {
+            _propertyMappingService = propertyMappingService;
+        }
 
         public async Task<EmployeeWorkDay?> GetWorkDayAsync(Guid workDayId, Guid employeeId)
         {
@@ -26,8 +35,18 @@ namespace Infrastructure.Repositories
         public async Task<IPagedList<EmployeeWorkDay>>
             GetWorkDaysAsync(Guid employeeId , ResourceParameters resourceParameters)
         {
+            var query = Query;
+
+            var mappings =
+                _propertyMappingService.GetPropertyMapping<EmployeeWorkDay, WorkDayResponse>();
+
+            if(!resourceParameters.OrderBy.IsNullOrEmpty())
+            {
+                query = IQueraybleExtensions.ApplySort(query, resourceParameters.OrderBy!, mappings);
+            }
+
             return await PagedList<EmployeeWorkDay>
-                .CreateAsync(Query
+                .CreateAsync(query
                 .Where(w => w.EmployeeId == employeeId),
                 resourceParameters.PageNumber, resourceParameters.PageSize);
         }

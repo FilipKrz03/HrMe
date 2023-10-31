@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Services
+namespace Infrastructure.PropertyMapping
 {
     public class PropertyMappingService : IPropertyMappingService
     {
@@ -19,21 +19,32 @@ namespace Infrastructure.Services
                 {"Age" , new(new[]{"DateOfBirth"})}
             };
 
+        private Dictionary<string, PropertyMappingValue> _employeeWorkDayMapping =
+            new(StringComparer.OrdinalIgnoreCase)
+            {
+                {"Id" , new(new[]{"Id"}) } ,
+                {"WorkDayDate" ,new(new[]{"WorkDayDate"})} ,
+                {"StartTime" , new(new[]{"StartTimeInMinutesAfterMidnight"})} ,
+                {"EndTime" , new(new[]{"EndTimeInMinutesAfterMidnight"}) } ,
+            };
+
         private readonly IList<IPropertyMapping> _propertyMapings
          = new List<IPropertyMapping>();
 
         public PropertyMappingService()
         {
-            _propertyMapings
-                .Add(new PropertyMapping<Domain.Entities.Employee , EmployeeResponse>(_employeeMapping));
+            _propertyMapings.Add
+                (new PropertyMapping<Domain.Entities.Employee, EmployeeResponse>(_employeeMapping));
+            _propertyMapings.Add
+                (new PropertyMapping<Domain.Entities.EmployeeWorkDay , WorkDayResponse>(_employeeWorkDayMapping));
         }
 
-        public Dictionary<string, PropertyMappingValue> GetPropertyMapping<TSource , TDestination>()
+        public Dictionary<string, PropertyMappingValue> GetPropertyMapping<TSource, TDestination>()
         {
             var propertyMapping
-                = _propertyMapings.OfType<PropertyMapping<TSource , TDestination>>();
+                = _propertyMapings.OfType<PropertyMapping<TSource, TDestination>>();
 
-            if(propertyMapping.Count() == 1)
+            if (propertyMapping.Count() == 1)
             {
                 return propertyMapping.First().MapingDictionary;
             }
