@@ -20,7 +20,7 @@ namespace Infrastructure.Repositories
         private readonly IPropertyMappingService _propertyMappingService;
 
         public WorkDayRepository
-            (HrMeContext context , IPropertyMappingService propertyMappingService) : base(context)
+            (HrMeContext context, IPropertyMappingService propertyMappingService) : base(context)
         {
             _propertyMappingService = propertyMappingService;
         }
@@ -33,14 +33,22 @@ namespace Infrastructure.Repositories
         }
 
         public async Task<IPagedList<EmployeeWorkDay>>
-            GetWorkDaysAsync(Guid employeeId , ResourceParameters resourceParameters)
+            GetWorkDaysAsync(Guid employeeId, ResourceParameters resourceParameters)
         {
             var query = Query;
 
             var mappings =
-                _propertyMappingService.GetPropertyMapping<EmployeeWorkDay, WorkDayResponse>();
+            _propertyMappingService.GetPropertyMapping<EmployeeWorkDay, WorkDayResponse>();
 
-            if(!resourceParameters.OrderBy.IsNullOrEmpty())
+            if (!resourceParameters.SearchQuery.IsNullOrEmpty())
+            {
+                query = query.Where(w =>
+                w.Id.ToString().Contains(resourceParameters.SearchQuery!)
+                || w.WorkDayDate.ToString().Contains(resourceParameters.SearchQuery!)
+                );
+            }
+
+            if (!resourceParameters.OrderBy.IsNullOrEmpty())
             {
                 query = IQueraybleExtensions.ApplySort(query, resourceParameters.OrderBy!, mappings);
             }

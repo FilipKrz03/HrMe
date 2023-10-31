@@ -37,8 +37,18 @@ namespace Infrastructure.Repositories
         {
             var query = Query;
 
-            var mapping = 
-                _propertyMappingService.GetPropertyMapping<EmployeePaymentInfo , PaymentInfoResponse>(); 
+            var mapping =
+                _propertyMappingService.GetPropertyMapping<EmployeePaymentInfo, PaymentInfoResponse>();
+
+            if (!resourceParameters.SearchQuery.IsNullOrEmpty())
+            {
+                query = query.Where
+                    (p => p.HourlyRateBrutto.ToString().Contains(resourceParameters.SearchQuery!)
+                    || p.StartOfContractDate.ToString().Contains(resourceParameters.SearchQuery!)
+                    || p.EndOfContractDate.ToString()!.Contains(resourceParameters.SearchQuery!)
+                    || p.Id.ToString().Contains(resourceParameters.SearchQuery!)
+                    );
+            }
 
             if(!resourceParameters.OrderBy.IsNullOrEmpty())
             {

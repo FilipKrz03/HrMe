@@ -18,7 +18,7 @@ namespace Infrastructure.Repositories
     {
 
         private readonly IPropertyMappingService _propertyMappingService;
-        public EmployeeRepository(HrMeContext context , IPropertyMappingService propertyMappingService) : base(context)
+        public EmployeeRepository(HrMeContext context, IPropertyMappingService propertyMappingService) : base(context)
         {
             _propertyMappingService = propertyMappingService;
         }
@@ -49,15 +49,25 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<IPagedList<Employee>> 
+        public async Task<IPagedList<Employee>>
             GetEmployeesAsync(Guid companyId, ResourceParameters resourceParameters)
         {
             var query = Query;
 
-            var mappings = 
-                _propertyMappingService.GetPropertyMapping<Employee , EmployeeResponse>();
+            var mappings =
+             _propertyMappingService.GetPropertyMapping<Employee, EmployeeResponse>();
 
-            if(!resourceParameters.OrderBy.IsNullOrEmpty())
+            if (!resourceParameters.SearchQuery.IsNullOrEmpty())
+            {
+                query = query.Where
+                    (e => e.FirstName.Contains(resourceParameters.SearchQuery!)
+                    || e.LastName.Contains(resourceParameters.SearchQuery!)
+                    || e.Id.ToString().Contains(resourceParameters.SearchQuery!)
+                    || e.Email.Contains(resourceParameters.SearchQuery!)
+                    || e.Position.Contains(resourceParameters.SearchQuery!));
+            }
+
+            if (!resourceParameters.OrderBy.IsNullOrEmpty())
             {
                 query = IQueraybleExtensions.ApplySort(query, resourceParameters.OrderBy!, mappings);
             }

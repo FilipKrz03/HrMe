@@ -13,5 +13,7 @@ namespace Domain.Common
         public int PageSize { get; set; } = 10;
 
         public string? OrderBy { get; set; }
+
+        public string? SearchQuery { get; set; }
     }
 }
