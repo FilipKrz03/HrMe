@@ -28,6 +28,16 @@ namespace Infrastructure.PropertyMapping
                 {"EndTime" , new(new[]{"EndTimeInMinutesAfterMidnight"}) } ,
             };
 
+        private Dictionary<string, PropertyMappingValue> _employeePaymentInfoMapping =
+            new(StringComparer.OrdinalIgnoreCase)
+            {
+                {"Id" , new(new[]{"Id"}) } ,
+                {"HourlyRateBrutto" , new(new[]{"HourlyRateBrutto"})} ,
+                {"StartOfContractDate" , new(new[]{"StartOfContractDate"})},
+                {"EndOfContractDate" , new(new[]{"EndOfContractDate"})},
+                {"ContractType" , new(new[]{"ContractType"})} ,
+            };
+
         private readonly IList<IPropertyMapping> _propertyMapings
          = new List<IPropertyMapping>();
 
@@ -36,7 +46,37 @@ namespace Infrastructure.PropertyMapping
             _propertyMapings.Add
                 (new PropertyMapping<Domain.Entities.Employee, EmployeeResponse>(_employeeMapping));
             _propertyMapings.Add
-                (new PropertyMapping<Domain.Entities.EmployeeWorkDay , WorkDayResponse>(_employeeWorkDayMapping));
+                (new PropertyMapping<Domain.Entities.EmployeeWorkDay, WorkDayResponse>(_employeeWorkDayMapping));
+            _propertyMapings.Add
+                (new PropertyMapping<Domain.Entities.EmployeePaymentInfo, PaymentInfoResponse>(_employeePaymentInfoMapping));
+        }
+
+        public bool PropertyMappingExist<TSource, TDestination>(string? fields)
+        {
+            var propertyMapping = GetPropertyMapping<TSource, TDestination>();
+
+            if (string.IsNullOrEmpty(fields))
+            {
+                return true;
+            }
+
+            var fieldsAfterSplit = fields.Split(',');
+
+            foreach (var field in fieldsAfterSplit)
+            {
+                var trimmedField = field.Trim();
+
+                var indexOffWhiteSpace = trimmedField.IndexOf(' ');
+
+                var propertyName = indexOffWhiteSpace == -1 ?
+                    trimmedField : trimmedField.Remove(indexOffWhiteSpace);
+
+                if (!propertyMapping.ContainsKey(propertyName))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public Dictionary<string, PropertyMappingValue> GetPropertyMapping<TSource, TDestination>()

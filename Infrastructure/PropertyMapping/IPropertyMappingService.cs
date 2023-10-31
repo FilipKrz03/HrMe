@@ -9,5 +9,6 @@ namespace Infrastructure.PropertyMapping
     public interface IPropertyMappingService
     {
         public Dictionary<string, PropertyMappingValue> GetPropertyMapping<TSource, TDestination>();
+        public bool PropertyMappingExist<TSource, TDestination>(string fields);
     }
 }

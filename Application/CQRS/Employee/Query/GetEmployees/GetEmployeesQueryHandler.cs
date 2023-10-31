@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Infrastructure.PropertyMapping;
 
 namespace Application.CQRS.Employee.Query.GetEmployees
 {
@@ -20,19 +21,28 @@ namespace Application.CQRS.Employee.Query.GetEmployees
         private readonly IMapper _mapper;
         private readonly IEmployeeRepository _employeeRepository;
         private readonly ICompanyRepository _companyRepository;
+        private readonly IPropertyMappingService _propertyMappingService;
 
         public GetEmployeesQueryHandler(IMapper mapper, ICompanyRepository companyRepository, 
-            IEmployeeRepository employeeRepository)
+            IEmployeeRepository employeeRepository , IPropertyMappingService propertyMappingService)
         {
             _mapper = mapper;
             _companyRepository = companyRepository;
             _employeeRepository = employeeRepository;
+            _propertyMappingService = propertyMappingService;
         }
 
         public async Task<Response<PagedList<EmployeeResponse>>>
             Handle(GetEmployeesQuery request, CancellationToken cancellationToken)
         {
             Response<PagedList<EmployeeResponse>> response = new();
+
+            if(!_propertyMappingService
+                .PropertyMappingExist<Domain.Entities.Employee , EmployeeResponse>(request.ResourceParameters.OrderBy!))
+            {
+                return response.SetError(400 , $"One of orderByFields that you entered does not exist : " +
+                    $"{request.ResourceParameters.OrderBy}");
+            }
 
             var comapnyExist = await _companyRepository.CompanyExistAsync(request.CompanyId);
 
