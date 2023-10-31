@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.CQRS.WorkDay.Response
+namespace Domain.Responses
 {
     public class WorkDayResponse
     {

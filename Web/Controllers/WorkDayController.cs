@@ -2,7 +2,7 @@
 using Application.CQRS.WorkDay.Command.CreateWorkDay;
 using Application.CQRS.WorkDay.Query.GetWorkDay;
 using Application.CQRS.WorkDay.Query.GetWorkDays;
-using Application.CQRS.WorkDay.Response;
+using Domain.Responses;
 using Domain.Abstractions;
 using Domain.Common;
 using Infrastructure.Common;
@@ -39,7 +39,7 @@ namespace Web.Controllers
 
             GetWorkDayQuery query = new (companyId , employeeId , workDayId);
 
-            Response <WorkDayResponse> result = await _mediator.Send(query);
+            Response<WorkDayResponse> result = await _mediator.Send(query);
 
             return result.IsError == true ? StatusCode(result.StatusCode, result.Message) :
                   Ok(result.Value);

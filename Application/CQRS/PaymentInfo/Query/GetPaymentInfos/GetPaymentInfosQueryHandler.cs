@@ -1,4 +1,4 @@
-﻿using Application.CQRS.PaymentInfo.Response;
+﻿using Domain.Responses;
 using AutoMapper;
 using Azure;
 using Domain.Abstractions;

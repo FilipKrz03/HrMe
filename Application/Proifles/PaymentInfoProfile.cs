@@ -1,5 +1,5 @@
 ﻿using Application.CQRS.PaymentInfo.Command.CreatePaymentInfo;
-using Application.CQRS.PaymentInfo.Response;
+using Domain.Responses;
 using AutoMapper;
 using System;
 using System.Collections.Generic;

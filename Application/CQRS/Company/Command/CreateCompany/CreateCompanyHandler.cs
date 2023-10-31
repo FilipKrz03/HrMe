@@ -1,5 +1,4 @@
-﻿using Application.CQRS.Company.Response;
-using AutoMapper;
+﻿using AutoMapper;
 using Domain.Abstractions;
 using Domain.Entities;
 using Infrastructure;

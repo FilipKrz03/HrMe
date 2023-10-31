@@ -1,8 +1,11 @@
 ﻿using Domain.Abstractions;
 using Domain.Common;
 using Domain.Entities;
+using Domain.Responses;
 using Infrastructure.Common;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +16,12 @@ namespace Infrastructure.Repositories
 {
     public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
     {
-        public EmployeeRepository(HrMeContext context) : base(context) { }
+
+        private readonly IPropertyMappingService _propertyMappingService;
+        public EmployeeRepository(HrMeContext context , IPropertyMappingService propertyMappingService) : base(context)
+        {
+            _propertyMappingService = propertyMappingService;
+        }
 
         public async Task<bool> EmployeeExistAsync(Guid employeeId)
         {
@@ -44,8 +52,18 @@ namespace Infrastructure.Repositories
         public async Task<IPagedList<Employee>> 
             GetEmployeesAsync(Guid companyId, ResourceParameters resourceParameters)
         {
+            var query = Query;
+
+            var mappings = 
+                _propertyMappingService.GetPropertyMapping<Employee , EmployeeResponse>();
+
+            if(!resourceParameters.OrderBy.IsNullOrEmpty())
+            {
+                query = IQueraybleExtensions.ApplySort(query, resourceParameters.OrderBy!, mappings);
+            }
+
             return await PagedList<Employee>
-                .CreateAsync(Query
+                .CreateAsync(query
                  .Where(e => e.CompanyId == companyId),
                  resourceParameters.PageNumber, resourceParameters.PageSize);
         }

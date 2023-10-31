@@ -21,6 +21,8 @@ namespace Application
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+           
+
             return services;
         }
     }

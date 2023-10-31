@@ -1,6 +1,6 @@
 ﻿using Application.Common;
 using Application.CQRS.WorkDay.Command.CreateWorkDay;
-using Application.CQRS.WorkDay.Response;
+using Domain.Responses;
 using AutoMapper;
 using System;
 using System.Collections.Generic;

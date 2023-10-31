@@ -1,6 +1,6 @@
 ﻿using Application.Common;
 using Application.CQRS.Employee.Command.CreateEmployee;
-using Application.CQRS.Employee.Response;
+using Domain.Responses;
 using AutoMapper;
 using Infrastructure.Common;
 using System;

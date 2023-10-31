@@ -1,6 +1,7 @@
 ﻿using Domain.Abstractions;
 using Infrastructure.Authentiaction;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,7 @@ namespace Infrastructure
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IWorkDayReposiotry, WorkDayRepository>();
             services.AddScoped<IPaymentInfoRepository, PaymentInfoRepository>();
+            services.AddTransient<IPropertyMappingService ,PropertyMappingService>();
 
             return services;
         }

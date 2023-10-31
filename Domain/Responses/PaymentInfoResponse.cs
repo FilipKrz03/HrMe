@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.CQRS.PaymentInfo.Response
+namespace Domain.Responses
 {
     public class PaymentInfoResponse
     {

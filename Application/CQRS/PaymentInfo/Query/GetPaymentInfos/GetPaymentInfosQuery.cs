@@ -1,4 +1,4 @@
-﻿using Application.CQRS.PaymentInfo.Response;
+﻿using Domain.Responses;
 using Domain.Abstractions;
 using Domain.Common;
 using Infrastructure.Common;

@@ -1,5 +1,5 @@
 ﻿using Application.Common;
-using Application.CQRS.PaymentInfo.Response;
+using Domain.Responses;
 using AutoMapper;
 using Domain.Abstractions;
 using Domain.Entities;

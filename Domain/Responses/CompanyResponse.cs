@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.CQRS.Company.Response
+namespace Domain.Responses
 {
     public class CompanyResponse
     {

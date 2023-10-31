@@ -1,9 +1,8 @@
 ﻿using Application.CQRS;
-using Application.CQRS.Company.Response;
 using Application.CQRS.Employee.Command.CreateEmployee;
 using Application.CQRS.Employee.Query.GetEmployee;
 using Application.CQRS.Employee.Query.GetEmployees;
-using Application.CQRS.Employee.Response;
+using Domain.Responses;
 using Domain.Abstractions;
 using Domain.Common;
 using Infrastructure.Common;

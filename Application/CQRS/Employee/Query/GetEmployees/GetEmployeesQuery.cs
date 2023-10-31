@@ -1,4 +1,4 @@
-﻿using Application.CQRS.Employee.Response;
+﻿using Domain.Responses;
 using Domain.Common;
 using Infrastructure.Common;
 using MediatR;

@@ -2,7 +2,7 @@
 using Application.CQRS.PaymentInfo.Command.CreatePaymentInfo;
 using Application.CQRS.PaymentInfo.Query.GePaymentInfo;
 using Application.CQRS.PaymentInfo.Query.GetPaymentInfos;
-using Application.CQRS.PaymentInfo.Response;
+using Domain.Responses;
 using Domain.Abstractions;
 using Domain.Common;
 using Infrastructure.Common;

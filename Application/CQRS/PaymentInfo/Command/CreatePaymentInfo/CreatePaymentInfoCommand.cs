@@ -1,4 +1,4 @@
-﻿using Application.CQRS.PaymentInfo.Response;
+﻿using Domain.Responses;
 using Domain.Common.Enums;
 using MediatR;
 using System;

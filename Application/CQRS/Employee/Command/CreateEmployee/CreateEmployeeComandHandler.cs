@@ -1,4 +1,4 @@
-﻿using Application.CQRS.Employee.Response;
+﻿using Domain.Responses;
 using AutoMapper;
 using Domain.Abstractions;
 using Domain.Entities;
