@@ -77,10 +77,19 @@ namespace Infrastructure.Repositories
                  .Where(e => e.CompanyId == companyId),
                  resourceParameters.PageNumber, resourceParameters.PageSize);
         }
-
         public async Task InsertEmployee(Employee employee)
         {
             await Insert(employee);
+        }
+
+        public async Task DeleteEmployee(Employee employee)
+        {
+            await DeleteEntity(employee);
+        }
+
+        async Task IEmployeeRepository.SaveChangesAsync()
+        {
+            await SaveChangesAsync();
         }
     }
 }

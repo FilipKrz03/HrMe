@@ -53,6 +53,12 @@ namespace Infrastructure.Repositories
             return await _context.Set<TEntity>()
                 .AnyAsync(e => e.Id == id);
         }
+
+        protected async Task DeleteEntity(TEntity entity)
+        {
+            _context.Set<TEntity>().Remove(entity);
+            await SaveChangesAsync();  
+        }
     }
 }
 

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.CQRS.Employee.Command.CreateEmployee
+namespace Application.CQRS.Employee.Command
 {
-    public class CreateEmployeeRequest
+    public class EmployeeRequest
     {
         public string FirstName { get; set; } = string.Empty;
 

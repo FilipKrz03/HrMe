@@ -21,5 +21,9 @@ namespace Domain.Abstractions
         Task<Employee?> GetEmployeeAsync(Guid employeeId , Guid companyId);
 
         Task<IPagedList<Employee>> GetEmployeesAsync(Guid companyId, ResourceParameters resourceParameters);
+
+        Task DeleteEmployee(Employee employee);
+
+        Task SaveChangesAsync();
     }
 }

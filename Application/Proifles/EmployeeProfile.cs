@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.CQRS.Employee.Command.PutEmployee;
 
 namespace Application.Proifles
 {
@@ -16,6 +17,8 @@ namespace Application.Proifles
         public EmployeeProfile()
         {
             CreateMap<CreateEmployeeCommand, Domain.Entities.Employee>();
+
+            CreateMap<PutEmployeeComand, Domain.Entities.Employee>();
 
             CreateMap<Domain.Entities.Employee, EmployeeResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
