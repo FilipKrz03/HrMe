@@ -17,5 +17,11 @@ namespace Domain.Abstractions
         Task<EmployeeWorkDay?> GetWorkDayAsync(Guid workDayId , Guid employeeId);
 
         Task<IPagedList<EmployeeWorkDay>> GetWorkDaysAsync(Guid employeeId , ResourceParameters resourceParameters);
+
+        Task DeleteWorkDayAsync(EmployeeWorkDay employeeWorkDay);
+
+        Task SaveChangesAsync();
+
+        Task<bool> OtherWorkDayExist(DateTime workDayDate, Guid employeeId, Guid workDayId);
     }
 }

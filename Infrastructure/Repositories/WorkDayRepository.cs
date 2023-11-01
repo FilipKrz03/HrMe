@@ -24,7 +24,6 @@ namespace Infrastructure.Repositories
         {
             _propertyMappingService = propertyMappingService;
         }
-
         public async Task<EmployeeWorkDay?> GetWorkDayAsync(Guid workDayId, Guid employeeId)
         {
             return await GetByIdQuery(workDayId)
@@ -72,6 +71,24 @@ namespace Infrastructure.Repositories
             && w.WorkDayDate.Month == workDayDate.Month
             && w.WorkDayDate.Year == workDayDate.Year
             && w.EmployeeId == employeeId);
+        }
+
+        public async Task DeleteWorkDayAsync(EmployeeWorkDay employeeWorkDay)
+        {
+            await DeleteEntity(employeeWorkDay);
+        }
+
+        async Task IWorkDayReposiotry.SaveChangesAsync()
+        {
+            await SaveChangesAsync();
+        }
+
+        public async Task<bool> OtherWorkDayExist(DateTime workDayDate, Guid employeeId , Guid workDayId)
+        {
+            return await Query
+                .AnyAsync(w => w.WorkDayDate == workDayDate
+                && w.EmployeeId == employeeId
+                && w.Id != workDayId);
         }
     }
 }

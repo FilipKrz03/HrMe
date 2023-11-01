@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.CQRS.WorkDay.Command.CreateWorkDay
+namespace Application.CQRS.WorkDay.Command
 {
-    public class CreateWorkDayRequest
+    public class WorkDayRequest
     {
         public DateTime WorkDayDate { get; set; }
 

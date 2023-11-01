@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.CQRS.WorkDay.Command.PutWorkDay;
 
 namespace Application.Proifles
 {
@@ -15,6 +16,12 @@ namespace Application.Proifles
         public WorkDayProfile()
         {
             CreateMap<CreateWorkDayCommand, Domain.Entities.EmployeeWorkDay>()
+                .ForMember(dest => dest.StartTimeInMinutesAfterMidnight,
+                opt => opt.MapFrom(src => TimeOnlyExtensions.CalculateMinutesAfterMidnight(src.StartTime)))
+                 .ForMember(dest => dest.EndTimeInMinutesAfterMidnight,
+                opt => opt.MapFrom(src => TimeOnlyExtensions.CalculateMinutesAfterMidnight(src.EndTime)));
+
+            CreateMap<PutWorkDayCommand, Domain.Entities.EmployeeWorkDay>()
                 .ForMember(dest => dest.StartTimeInMinutesAfterMidnight,
                 opt => opt.MapFrom(src => TimeOnlyExtensions.CalculateMinutesAfterMidnight(src.StartTime)))
                  .ForMember(dest => dest.EndTimeInMinutesAfterMidnight,
