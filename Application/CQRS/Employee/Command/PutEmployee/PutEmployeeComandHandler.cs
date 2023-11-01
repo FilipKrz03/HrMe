@@ -38,6 +38,14 @@ namespace Application.CQRS.Employee.Command.PutEmployee
 
             if (employee == null)
             {
+                var employeeWithSameMail = 
+                    await _employeeRepository.EmployeExistWithEmailInCompanyAsync(request.Email , request.CompanyId);
+
+                if(employeeWithSameMail)
+                {
+                    return response.SetError(400, $"Employ with entered email {request.Email} already exist");
+                }
+
                 Domain.Entities.Employee createdEmployee
                 = _mapper.Map<Domain.Entities.Employee>(request);
 
@@ -51,6 +59,15 @@ namespace Application.CQRS.Employee.Command.PutEmployee
                 response.Value = employeeToReturn;
 
                 return response;
+            }
+
+            var employeeWithSameMailExist = await _employeeRepository.
+                OtherEmployeeExistWithSameMail(request.Email, request.CompanyId, request.EmployeeId);
+
+            if(employeeWithSameMailExist )
+            {
+                return response.SetError(400, $"You want to change email but " +
+                    $"other employee has already this email :  {request.Email}");
             }
 
             _mapper.Map(request, employee);

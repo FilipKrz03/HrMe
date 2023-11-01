@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Formats.Asn1;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -90,6 +91,15 @@ namespace Infrastructure.Repositories
         async Task IEmployeeRepository.SaveChangesAsync()
         {
             await SaveChangesAsync();
+        }
+
+        public async Task<bool> 
+            OtherEmployeeExistWithSameMail(string mailToCheck , Guid companyId , Guid employeeId)
+        {
+            return await Query
+                .AnyAsync(e => e.CompanyId == companyId
+                && e.Id != employeeId
+                && e.Email == mailToCheck);
         }
     }
 }

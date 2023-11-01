@@ -25,5 +25,7 @@ namespace Domain.Abstractions
         Task DeleteEmployee(Employee employee);
 
         Task SaveChangesAsync();
+
+        Task<bool> OtherEmployeeExistWithSameMail(string mailToCheck, Guid companyId, Guid employeeId);
     }
 }
