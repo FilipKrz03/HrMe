@@ -22,8 +22,8 @@ namespace Application.CQRS.PaymentInfo.Command.CreatePaymentInfo
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IPaymentInfoRepository _paymentInfoRepository;
 
-        public CreatePaymentInfoCommandHandler(IMapper mapper , IEmployeeRepository employeeRepository , 
-            ICompanyRepository companyRepository , IPaymentInfoRepository paymentInfoRepository )
+        public CreatePaymentInfoCommandHandler(IMapper mapper, IEmployeeRepository employeeRepository,
+            ICompanyRepository companyRepository, IPaymentInfoRepository paymentInfoRepository)
         {
             _mapper = mapper;
             _employeeRepository = employeeRepository;
@@ -36,25 +36,24 @@ namespace Application.CQRS.PaymentInfo.Command.CreatePaymentInfo
         {
             Response<PaymentInfoResponse> response = new();
 
-            var companyExist = await _companyRepository.CompanyExistAsync(request.CompanyId);   
+            var companyExist = await _companyRepository.CompanyExistAsync(request.CompanyId);
 
             if (!companyExist)
             {
                 return response.SetError(404, "We could not find your company");
             }
 
-            var employee = await _employeeRepository.GetEmployeeAsync(request.EmployeeId , request.CompanyId);
+            var employee = await _employeeRepository.GetEmployeeAsync(request.EmployeeId, request.CompanyId);
 
             if (employee == null)
             {
                 return response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
             }
 
-            bool isPaymantInfoDayRangeAvaliable =
-                 DateTimeExtensions.IsPaymentInfoDateAvaliable
-                 (request.StartOfContractDate, request.EndOfContractDate, employee.PaymentInfos);
+            bool contractDateIsNotAvaliable = await _paymentInfoRepository.
+                ContractDateIsNotAvaliableAsync(request.StartOfContractDate, request.EndOfContractDate);
 
-            if (isPaymantInfoDayRangeAvaliable == false)
+            if (contractDateIsNotAvaliable == true)
             {
                 return response.SetError(409, "Employee has already contract on requested time range");
             }
@@ -66,7 +65,7 @@ namespace Application.CQRS.PaymentInfo.Command.CreatePaymentInfo
             await _paymentInfoRepository.InsertPaymentInfo(paymentInfoEntity);
 
             response.Value = _mapper.Map<PaymentInfoResponse>(paymentInfoEntity);
-        
+
             return response;
         }
     }

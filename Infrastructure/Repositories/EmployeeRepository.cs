@@ -45,8 +45,6 @@ namespace Infrastructure.Repositories
         {
             return await GetByIdQuery(employeeId)
                 .Where(e => e.CompanyId == companyId)
-                .Include(e => e.PaymentInfos)
-                .Include(e => e.WorkDays)
                 .FirstOrDefaultAsync();
         }
 
