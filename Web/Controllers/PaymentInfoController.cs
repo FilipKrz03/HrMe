@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Mvc;
 using Sprache;
 using System.Text.Json;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Application.CQRS.PaymentInfo.Command.DeletePaymentInfo;
+using Application.CQRS.PaymentInfo.Command;
+using Application.CQRS.PaymentInfo.Command.PutPaymentInfo;
 
 namespace Web.Controllers
 {
@@ -49,7 +52,7 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Response<PaymentInfoResponse>>> CreatePaymentInfo(Guid employeeId, CreatePaymentInfoRequest request)
+        public async Task<ActionResult<Response<PaymentInfoResponse>>> CreatePaymentInfo(Guid employeeId, PaymentInfoRequest request)
         {
             var companyId = _userService.GetUserId();
 
@@ -68,15 +71,15 @@ namespace Web.Controllers
 
         [HttpGet]
         public async Task<ActionResult<Response<PagedList<PaymentInfoResponse>>>>
-            GetPaymentInfos(Guid employeeId , [FromQuery]ResourceParameters resourceParameters)
+            GetPaymentInfos(Guid employeeId, [FromQuery] ResourceParameters resourceParameters)
         {
             var companyId = _userService.GetUserId();
 
-            GetPaymentInfosQuery query = new(companyId, employeeId , resourceParameters);
+            GetPaymentInfosQuery query = new(companyId, employeeId, resourceParameters);
 
             Response<PagedList<PaymentInfoResponse>> result = await _mediator.Send(query);
 
-            if(result.IsError == true)
+            if (result.IsError == true)
             {
                 return StatusCode(result.StatusCode, result.Message);
             }
@@ -88,13 +91,54 @@ namespace Web.Controllers
                 pageNumber = result.Value!.PageNumber,
                 hasPrevious = result.Value!.HasPrevios,
                 hasNext = result.Value!.HasNext,
-                totalPages = result.Value!.TotalPages,  
+                totalPages = result.Value!.TotalPages,
             };
 
             Response.Headers.Add("X-Pagination",
                 JsonSerializer.Serialize(paginationMetadata));
 
             return Ok(result.Value);
+        }
+
+        [HttpDelete("{paymentInfoId}")]
+        public async Task<ActionResult<Response<bool>>> DeletePaymentInfo(Guid employeeId, Guid paymentInfoId)
+        {
+            var comapnyGuid = _userService.GetUserId();
+
+            DeletePaymentInfoCommand command = new(comapnyGuid, employeeId, paymentInfoId);
+
+            Response<bool> result = await _mediator.Send(command);
+
+            return result.IsError == true ? StatusCode(result.StatusCode, result.Message) :
+                 NoContent();
+        }
+
+        [HttpPut("{paymentInfoId}")]
+        public async Task<ActionResult<Response<PaymentInfoResponse>>>
+            PutPaymentInfo(Guid employeeId , Guid paymentInfoId , PaymentInfoRequest request)
+        {
+            var companyGuid = _userService.GetUserId();
+
+            PutPaymentInfoCommand command = new(companyGuid , employeeId  , paymentInfoId
+                , request.HourlyRateBrutto , request.ContractType , request.StartOfContractDate , request.EndOfContractDate);
+
+            Response<PaymentInfoResponse> result = await _mediator.Send(command);
+
+            if(result.IsError == true)
+            {
+                return StatusCode(result.StatusCode, result.Message);
+            }
+
+            if(result.Value != null)
+            {
+                return CreatedAtRoute("GetPaymentInfo", new
+                {
+                    employeeId,
+                    paymentInfoId = result.Value!.Id
+                }, result.Value);
+            }
+
+            return NoContent();
         }
     }
 }

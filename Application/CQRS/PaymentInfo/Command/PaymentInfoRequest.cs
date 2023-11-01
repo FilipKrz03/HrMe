@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.CQRS.PaymentInfo.Command.CreatePaymentInfo
+namespace Application.CQRS.PaymentInfo.Command
 {
-    public class CreatePaymentInfoRequest
+    public class PaymentInfoRequest
     {
         public double HourlyRateBrutto { get; set; }
 

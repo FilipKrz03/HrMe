@@ -20,7 +20,7 @@ namespace Infrastructure.Repositories
         private readonly IPropertyMappingService _propertyMappingService;
 
         public PaymentInfoRepository
-            (HrMeContext context , IPropertyMappingService propertyMappingService) : base(context)
+            (HrMeContext context, IPropertyMappingService propertyMappingService) : base(context)
         {
             _propertyMappingService = propertyMappingService;
         }
@@ -32,8 +32,14 @@ namespace Infrastructure.Repositories
                  .FirstOrDefaultAsync();
         }
 
+        public async Task<IEnumerable<EmployeePaymentInfo>> GetAllPaymentInfos(Guid employeeId)
+        {
+            return await Query.Where(p => p.EmployeeId == employeeId)
+                .ToListAsync();
+        }
+
         public async Task<IPagedList<EmployeePaymentInfo>>
-            GetPaymentInfos(Guid employeeId , ResourceParameters resourceParameters)
+            GetPaymentInfos(Guid employeeId, ResourceParameters resourceParameters)
         {
             var query = Query;
 
@@ -50,7 +56,7 @@ namespace Infrastructure.Repositories
                     );
             }
 
-            if(!resourceParameters.OrderBy.IsNullOrEmpty())
+            if (!resourceParameters.OrderBy.IsNullOrEmpty())
             {
                 query = IQueraybleExtensions.ApplySort(query, resourceParameters.OrderBy!, mapping);
             }
@@ -65,5 +71,38 @@ namespace Infrastructure.Repositories
         {
             await Insert(paymentInfo);
         }
+
+        public async Task DeletePaymentInfo(EmployeePaymentInfo paymentInfo)
+        {
+            await DeleteEntity(paymentInfo);
+        }
+
+        public async Task<bool> ContractDateIsNotAvaliableAsync
+            (DateTime start, DateTime? end)
+        {
+            return await Query
+                .AnyAsync(c =>
+                (start < c.EndOfContractDate && end >= c.StartOfContractDate)
+                || (c.EndOfContractDate == null && start >= c.StartOfContractDate)
+                || (end == null && start <= c.EndOfContractDate));
+
+        }
+
+        public async Task<bool> OtherContractIsPending(DateTime start, DateTime? end, Guid currentContractId)
+        {
+            return await Query
+                      .AnyAsync(c =>
+                      ((start < c.EndOfContractDate && end >= c.StartOfContractDate)
+                      || (c.EndOfContractDate == null && start >= c.StartOfContractDate)
+                      || (end == null && start <= c.EndOfContractDate))
+                      && (c.Id != currentContractId)
+                      );
+        }
+
+        async Task IPaymentInfoRepository.SaveChangesAsync()
+        {
+            await SaveChangesAsync();
+        }
+
     }
 }

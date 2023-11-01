@@ -15,5 +15,15 @@ namespace Domain.Abstractions
         Task<EmployeePaymentInfo?> GetPaymentInfo(Guid paymentInfoId, Guid employeeId);
 
         Task<IPagedList<EmployeePaymentInfo>> GetPaymentInfos(Guid employeeId , ResourceParameters resourceParameters); 
+
+        Task DeletePaymentInfo(EmployeePaymentInfo paymentInfo);
+
+        Task<IEnumerable<EmployeePaymentInfo>> GetAllPaymentInfos(Guid employeeId);
+
+        Task<bool> ContractDateIsNotAvaliableAsync(DateTime start, DateTime? end);
+
+        Task<bool> OtherContractIsPending(DateTime start, DateTime? end, Guid currentContractId);
+
+        Task SaveChangesAsync();
     }
 }
