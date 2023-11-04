@@ -25,5 +25,7 @@ namespace Domain.Abstractions
         Task<bool> OtherContractIsPending(DateTime start, DateTime? end, Guid currentContractId);
 
         Task SaveChangesAsync();
+
+        Task<IEnumerable<EmployeePaymentInfo>> GetValidPaymentInfosForMonth(Guid employeeId, int year, int month);
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Application.Common;
+using Application.Services;
+using Domain.Abstractions;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -21,7 +23,7 @@ namespace Application
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
-           
+            services.AddSingleton<IWageService, WageService>();
 
             return services;
         }

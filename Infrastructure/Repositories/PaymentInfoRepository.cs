@@ -82,7 +82,7 @@ namespace Infrastructure.Repositories
         {
             return await Query
                 .AnyAsync(c =>
-                (start < c.EndOfContractDate && end >= c.StartOfContractDate)
+                (start <= c.EndOfContractDate && end >= c.StartOfContractDate)
                 || (c.EndOfContractDate == null && start >= c.StartOfContractDate)
                 || (end == null && start <= c.EndOfContractDate));
 
@@ -102,6 +102,28 @@ namespace Infrastructure.Repositories
         async Task IPaymentInfoRepository.SaveChangesAsync()
         {
             await SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<EmployeePaymentInfo>> 
+            GetValidPaymentInfosForMonth(Guid employeeId , int year , int month)
+        {
+         
+            return await Query.Where(p =>
+            p.EmployeeId == employeeId
+            && 
+            ((p.StartOfContractDate.Year == year
+            && p.StartOfContractDate.Month <= month)
+            || p.StartOfContractDate.Year < year
+            )
+            && 
+            (
+            (p.EndOfContractDate == null)
+            || 
+            (p.EndOfContractDate.Value.Year == year
+            && p.EndOfContractDate.Value.Month >= month)
+            ||
+            (p.EndOfContractDate.Value.Year > year)))    
+            .ToListAsync();
         }
 
     }
