@@ -38,5 +38,16 @@ namespace Infrastructure.Repositories
                 , resourceParameters.PageNumber, resourceParameters.PageSize);
         }
 
+        public async Task<bool> EmployeMonthlyBonusExistAsync(Guid employeeId , Guid monthlyBonusId)
+        {
+            return await Query
+                .AnyAsync(b => b.Id == monthlyBonusId && b.EmployeeId == employeeId);
+        }
+
+        public async Task DeleteMonthlyBonusAsync(EmployeeMonthlyBonus monthlyBonus)
+        {
+            await DeleteEntity(monthlyBonus);
+        }
+
     }
 }

@@ -2,6 +2,7 @@
 using Application.CQRS.Company.Command.CreateCompany;
 using Application.CQRS.MonthlyBonus.Command;
 using Application.CQRS.MonthlyBonus.Command.CreateMonthlyBonus;
+using Application.CQRS.MonthlyBonus.Command.DeleteMonthlyBonus;
 using Application.CQRS.MonthlyBonus.Query.GetMonthlyBonus;
 using Application.CQRS.MonthlyBonus.Query.GetMonthlyBonuses;
 using Domain.Abstractions;
@@ -93,6 +94,20 @@ namespace Web.Controllers
                 JsonSerializer.Serialize(paginationMetadata));
 
             return Ok(result.Value);
+        }
+
+        [HttpDelete("{monthlyBonusId}")]
+        public async Task<ActionResult<Response<bool>>>
+            DeleteMonthlyBonus(Guid employeeId, Guid monthlyBonusId)
+        {
+            var companyId = _userService.GetUserId();
+
+            DeleteMonthlyBonusCommand command = new(companyId, employeeId, monthlyBonusId);
+
+            Response<bool> result = await _mediator.Send(command);
+
+            return result.IsError == true ? StatusCode(result.StatusCode, result.Message)
+               : NoContent();
         }
     }
 }

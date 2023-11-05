@@ -15,5 +15,9 @@ namespace Domain.Abstractions
         Task<EmployeeMonthlyBonus?> GetMonthlyBonus(Guid employeeId, Guid monthlyBonusId);
 
         Task<IPagedList<EmployeeMonthlyBonus>> GetEmployeeMonthlyBonuses(Guid employeeId, ResourceParameters resourceParameters);
+
+        Task<bool> EmployeMonthlyBonusExistAsync(Guid employeeId, Guid monthlyBonusId);
+
+        Task DeleteMonthlyBonusAsync(EmployeeMonthlyBonus monthlyBonus);
     }
 }
