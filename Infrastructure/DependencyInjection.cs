@@ -32,6 +32,8 @@ namespace Infrastructure
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IWorkDayReposiotry, WorkDayRepository>();
             services.AddScoped<IPaymentInfoRepository, PaymentInfoRepository>();
+            services.AddScoped<IMonthlyBonusRepository, MonthlyBonusRepository>();
+
             services.AddTransient<IPropertyMappingService ,PropertyMappingService>();
 
             return services;

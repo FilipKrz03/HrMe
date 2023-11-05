@@ -18,6 +18,8 @@ namespace Infrastructure
 
         public DbSet<EmployeePaymentInfo> EmployeesPaymentInfos {  get; set; }  
 
+        public DbSet<EmployeeMonthlyBonus> EmployeesMonthlyBonuses {  get; set; }   
+
         public HrMeContext(DbContextOptions<HrMeContext> options) : base(options) { }
     }
 }

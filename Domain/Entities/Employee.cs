@@ -31,6 +31,9 @@ namespace Domain.Entities
         public ICollection<EmployeePaymentInfo> PaymentInfos { get; set; }
             = new List<EmployeePaymentInfo>();
 
+        public ICollection<EmployeeMonthlyBonus> MonthlyBonus { get; set; }
+            = new List<EmployeeMonthlyBonus>();
+
         [ForeignKey("CompanyId")]
         public Company Company { get; set; } = null!;
         public Guid CompanyId { get; set; } 
