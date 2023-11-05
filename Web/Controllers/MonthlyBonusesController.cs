@@ -3,6 +3,7 @@ using Application.CQRS.Company.Command.CreateCompany;
 using Application.CQRS.MonthlyBonus.Command;
 using Application.CQRS.MonthlyBonus.Command.CreateMonthlyBonus;
 using Application.CQRS.MonthlyBonus.Command.DeleteMonthlyBonus;
+using Application.CQRS.MonthlyBonus.Command.PutMonthlyBonus;
 using Application.CQRS.MonthlyBonus.Query.GetMonthlyBonus;
 using Application.CQRS.MonthlyBonus.Query.GetMonthlyBonuses;
 using Domain.Abstractions;
@@ -108,6 +109,34 @@ namespace Web.Controllers
 
             return result.IsError == true ? StatusCode(result.StatusCode, result.Message)
                : NoContent();
+        }
+
+        [HttpPut("{monthlyBonusId}")]
+        public async Task<ActionResult<Response<MonthlyBonusResponse>>>
+            PutMonthlyBonus(Guid employeeId, Guid monthlyBonusId, MonthlyBonusRequest request)
+        {
+            var companyId = _userService.GetUserId();
+
+            PutMonthlyBonusCommand command = new(companyId, employeeId, monthlyBonusId,
+                request.Year, request.Month, request.BonusAmount, request.BonusInPercent);
+
+            Response<MonthlyBonusResponse> result = await _mediator.Send(command);
+
+            if (result.IsError == true)
+            {
+                return StatusCode(result.StatusCode, result.Message);
+            }
+
+            if (result.Value != null)
+            {
+                return CreatedAtRoute("GetMonthlyBonus", new
+                {
+                    employeeId,
+                    monthlyBonusId = result.Value!.Id
+                }, result.Value);
+            }
+
+            return NoContent();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Application.CQRS.MonthlyBonus.Command.CreateMonthlyBonus;
+using Application.CQRS.MonthlyBonus.Command.PutMonthlyBonus;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Responses;
@@ -16,6 +17,7 @@ namespace Application.Proifles
         {
             CreateMap<CreateMonthlyBonusCommand, EmployeeMonthlyBonus>();
             CreateMap<EmployeeMonthlyBonus , MonthlyBonusResponse>();
+            CreateMap<PutMonthlyBonusCommand, EmployeeMonthlyBonus>();
         }
     }
 }

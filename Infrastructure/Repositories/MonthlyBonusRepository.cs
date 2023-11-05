@@ -58,5 +58,19 @@ namespace Infrastructure.Repositories
                 m.Month == month);
         }
 
+        async Task IMonthlyBonusRepository.SaveChangesAsync()
+        {
+            await SaveChangesAsync();
+        }
+
+        public async Task<bool>
+            OtherMonthlyBonusDateExist(Guid employeeId , Guid monthlyBonusId , int year , int month)
+        {
+            return await Query
+                .AnyAsync(m => m.EmployeeId == employeeId
+                && m.Id != monthlyBonusId
+                && m.Year == year
+                && m.Month == month);   
+        }
     }
 }
