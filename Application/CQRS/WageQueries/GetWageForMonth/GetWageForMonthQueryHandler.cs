@@ -45,7 +45,7 @@ namespace Application.CQRS.WageQueries.GetWageForMonth
 
             var wageResponse = _wageService.
                 CalculateWageForMonth(employee.WorkDays, employee.PaymentInfos, request.Month, request.Year,
-                request.EmployeeId);
+                request.EmployeeId , employee.MonthlyBonus.Count != 0 ? employee.MonthlyBonus.First() : null!);
 
             if (wageResponse == null)
             {

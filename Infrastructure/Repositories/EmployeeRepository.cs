@@ -120,7 +120,10 @@ namespace Infrastructure.Repositories
                 (p.EndOfContractDate.Value.Year == year
                 && p.EndOfContractDate.Value.Month >= month)
                 ||
-                (p.EndOfContractDate.Value.Year > year)))),
+                (p.EndOfContractDate.Value.Year > year))))
+                .Include(m => m.MonthlyBonus
+                .Where(m => m.Month == month && m.Year == year))
+                ,
                 resourceParameters.PageNumber, resourceParameters.PageSize);
         }
 
@@ -144,6 +147,8 @@ namespace Infrastructure.Repositories
                 && p.EndOfContractDate.Value.Month >= month)
                 ||
                 (p.EndOfContractDate.Value.Year > year))))
+                .Include(m => m.MonthlyBonus
+                .Where(m => m.Month == month && m.Year == year && m.EmployeeId == employeeId))
                 .FirstOrDefaultAsync();
         }
     }

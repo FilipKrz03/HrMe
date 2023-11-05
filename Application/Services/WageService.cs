@@ -14,7 +14,7 @@ namespace Application.Services
         public WageResponse? CalculateWageForMonth
             (IEnumerable<EmployeeWorkDay> workDays,
             IEnumerable<EmployeePaymentInfo> paymentInfos,
-            int month , int year , Guid employeeId)
+            int month , int year , Guid employeeId , EmployeeMonthlyBonus? bonus)
         {
             double totalWageBrutto = 0;
             double totalWageNetto = 0;
@@ -37,11 +37,22 @@ namespace Application.Services
 
                 double wageBrutto = (minutesWorked / 60) * validPaymentInfo.HourlyRateBrutto;
 
+                if(bonus != null)
+                {
+                    wageBrutto *= (1 + bonus.BonusInPercent/100);
+                }
+
                 totalWageBrutto += wageBrutto;
 
                 totalWageNetto += validPaymentInfo.ContractType is
                     (Domain.Common.Enums.ContractType)1 or (Domain.Common.Enums.ContractType)2 ?
                     wageBrutto * 0.77 : wageBrutto;
+            }
+
+            if(bonus != null)
+            {
+                totalWageBrutto += bonus.BonusAmount;
+                totalWageNetto += bonus.BonusAmount;
             }
 
             double totalHoursWorked = totalMinutesWorked / 60;
