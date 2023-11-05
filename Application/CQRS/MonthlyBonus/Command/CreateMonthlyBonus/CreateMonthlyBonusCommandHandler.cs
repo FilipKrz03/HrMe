@@ -44,6 +44,11 @@ namespace Application.CQRS.MonthlyBonus.Command.CreateMonthlyBonus
                 return response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
             }
 
+            if(await _monthlyBonusRepository.MonthlyBonusDateNotAvaliable(request.EmployeeId , request.Year , request.Month))
+            {
+                return response.SetError(409, $"Monthly bonus already exist on {request.Year}/{request.Month}");
+            }
+
             var monthlyBonus = _mapper.Map<EmployeeMonthlyBonus>(request);
             monthlyBonus.EmployeeId = request.EmployeeId;
 

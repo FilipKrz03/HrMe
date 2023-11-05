@@ -49,5 +49,14 @@ namespace Infrastructure.Repositories
             await DeleteEntity(monthlyBonus);
         }
 
+
+        public async Task<bool> MonthlyBonusDateNotAvaliable(Guid employeeId , int year , int month)
+        {
+            return await Query
+                .AnyAsync(m => m.EmployeeId == employeeId &&
+                m.Year == year &&
+                m.Month == month);
+        }
+
     }
 }

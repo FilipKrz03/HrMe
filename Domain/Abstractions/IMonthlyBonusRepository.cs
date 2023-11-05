@@ -19,5 +19,7 @@ namespace Domain.Abstractions
         Task<bool> EmployeMonthlyBonusExistAsync(Guid employeeId, Guid monthlyBonusId);
 
         Task DeleteMonthlyBonusAsync(EmployeeMonthlyBonus monthlyBonus);
+
+        Task<bool> MonthlyBonusDateNotAvaliable(Guid employeeId, int year, int month);
     }
 }
