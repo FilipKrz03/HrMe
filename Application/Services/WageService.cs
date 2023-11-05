@@ -14,7 +14,7 @@ namespace Application.Services
         public WageResponse? CalculateWageForMonth
             (IEnumerable<EmployeeWorkDay> workDays,
             IEnumerable<EmployeePaymentInfo> paymentInfos,
-            int month , int year)
+            int month , int year , Guid employeeId)
         {
             double totalWageBrutto = 0;
             double totalWageNetto = 0;
@@ -47,7 +47,7 @@ namespace Application.Services
             double totalHoursWorked = totalMinutesWorked / 60;
 
             return new WageResponse
-                (totalWageNetto, totalWageBrutto, totalHoursWorked, month , year);
+                (totalWageNetto, totalWageBrutto, totalHoursWorked, month , year , employeeId);
         }
 
         private EmployeePaymentInfo? GetValidPaymentInfoForWorkDay(

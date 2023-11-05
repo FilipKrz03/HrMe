@@ -14,11 +14,11 @@ namespace Domain.Abstractions
 
         Task<bool> EmployeeExistsInCompanyAsync(Guid employeeId, Guid companyId);
 
-        Task<bool> EmployeExistWithEmailInCompanyAsync(string email , Guid companyId);
+        Task<bool> EmployeExistWithEmailInCompanyAsync(string email, Guid companyId);
 
         Task InsertEmployee(Employee employee);
 
-        Task<Employee?> GetEmployeeAsync(Guid employeeId , Guid companyId);
+        Task<Employee?> GetEmployeeAsync(Guid employeeId, Guid companyId);
 
         Task<IPagedList<Employee>> GetEmployeesAsync(Guid companyId, ResourceParameters resourceParameters);
 
@@ -27,5 +27,8 @@ namespace Domain.Abstractions
         Task SaveChangesAsync();
 
         Task<bool> OtherEmployeeExistWithSameMail(string mailToCheck, Guid companyId, Guid employeeId);
+
+        Task<IPagedList<Employee>> GetEmployeeWithPaymentDataForMonth(Guid companyId, int year, int month,
+           ResourceParameters resourceParameters);
     }
 }

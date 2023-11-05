@@ -13,7 +13,7 @@ namespace Domain.Abstractions
         WageResponse? CalculateWageForMonth
           (IEnumerable<EmployeeWorkDay> workDays,
              IEnumerable<EmployeePaymentInfo> paymentInfos,
-             int month , int year);
+             int month , int year , Guid employeeId);
 
 
     }

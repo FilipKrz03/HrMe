@@ -91,13 +91,37 @@ namespace Infrastructure.Repositories
             await SaveChangesAsync();
         }
 
-        public async Task<bool> 
-            OtherEmployeeExistWithSameMail(string mailToCheck , Guid companyId , Guid employeeId)
+        public async Task<bool>
+            OtherEmployeeExistWithSameMail(string mailToCheck, Guid companyId, Guid employeeId)
         {
             return await Query
                 .AnyAsync(e => e.CompanyId == companyId
                 && e.Id != employeeId
                 && e.Email == mailToCheck);
+        }
+
+        public async Task<IPagedList<Employee>> GetEmployeeWithPaymentDataForMonth(Guid companyId , int year, int month,
+            ResourceParameters resourceParameters)
+        {
+            return await PagedList<Employee>.CreateAsync
+                (Query
+                .Where(e => e.CompanyId == companyId)
+                .Include(w => w.WorkDays.Where
+                (w => w.WorkDayDate.Year == year && w.WorkDayDate.Month == month))
+                .Include(p => p.PaymentInfos.Where(p =>
+                ((p.StartOfContractDate.Year == year
+                && p.StartOfContractDate.Month <= month)
+                || p.StartOfContractDate.Year < year
+                )
+                &&
+                (
+                (p.EndOfContractDate == null)
+                ||
+                (p.EndOfContractDate.Value.Year == year
+                && p.EndOfContractDate.Value.Month >= month)
+                ||
+                (p.EndOfContractDate.Value.Year > year)))),
+                resourceParameters.PageNumber, resourceParameters.PageSize);
         }
     }
 }

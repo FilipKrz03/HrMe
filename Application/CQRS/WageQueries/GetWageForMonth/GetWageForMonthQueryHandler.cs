@@ -54,7 +54,8 @@ namespace Application.CQRS.WageQueries.GetWageForMonth
                 .GetValidPaymentInfosForMonth(request.EmployeeId , request.Year , request.Month);
 
             var wageResponse = _wageService.
-                CalculateWageForMonth(workDays, paymentInfosForMonth, request.Month , request.Year);
+                CalculateWageForMonth(workDays, paymentInfosForMonth, request.Month , request.Year , 
+                request.EmployeeId);
 
             if(wageResponse == null)
             {
