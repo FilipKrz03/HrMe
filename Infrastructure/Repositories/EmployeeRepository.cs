@@ -100,7 +100,7 @@ namespace Infrastructure.Repositories
                 && e.Email == mailToCheck);
         }
 
-        public async Task<IPagedList<Employee>> GetEmployeeWithPaymentDataForMonth(Guid companyId , int year, int month,
+        public async Task<IPagedList<Employee>> GetEmployeesWithPaymentDataForMonth(Guid companyId , int year, int month,
             ResourceParameters resourceParameters)
         {
             return await PagedList<Employee>.CreateAsync
@@ -122,6 +122,29 @@ namespace Infrastructure.Repositories
                 ||
                 (p.EndOfContractDate.Value.Year > year)))),
                 resourceParameters.PageNumber, resourceParameters.PageSize);
+        }
+
+        public async Task<Employee?> GetEmployeeWithPaymentDataForMonth
+            (Guid companyId , Guid employeeId , int year , int month)
+        {
+            return await Query
+                .Where(e => e.CompanyId == companyId && e.Id == employeeId)
+                .Include(w => w.WorkDays.Where
+                (w => w.WorkDayDate.Year == year && w.WorkDayDate.Month == month))
+                .Include(p => p.PaymentInfos.Where(p =>
+                ((p.StartOfContractDate.Year == year
+                && p.StartOfContractDate.Month <= month)
+                || p.StartOfContractDate.Year < year
+                )
+                &&
+                (
+                (p.EndOfContractDate == null)
+                ||
+                (p.EndOfContractDate.Value.Year == year
+                && p.EndOfContractDate.Value.Month >= month)
+                ||
+                (p.EndOfContractDate.Value.Year > year))))
+                .FirstOrDefaultAsync();
         }
     }
 }

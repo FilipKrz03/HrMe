@@ -26,6 +26,5 @@ namespace Domain.Abstractions
 
         Task SaveChangesAsync();
 
-        Task<IEnumerable<EmployeePaymentInfo>> GetValidPaymentInfosForMonth(Guid employeeId, int year, int month);
     }
 }

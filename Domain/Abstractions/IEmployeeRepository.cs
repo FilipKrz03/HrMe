@@ -28,7 +28,9 @@ namespace Domain.Abstractions
 
         Task<bool> OtherEmployeeExistWithSameMail(string mailToCheck, Guid companyId, Guid employeeId);
 
-        Task<IPagedList<Employee>> GetEmployeeWithPaymentDataForMonth(Guid companyId, int year, int month,
+        Task<IPagedList<Employee>> GetEmployeesWithPaymentDataForMonth(Guid companyId, int year, int month,
            ResourceParameters resourceParameters);
+
+        Task<Employee?> GetEmployeeWithPaymentDataForMonth(Guid companyId, Guid employeeId, int year, int month);
     }
 }

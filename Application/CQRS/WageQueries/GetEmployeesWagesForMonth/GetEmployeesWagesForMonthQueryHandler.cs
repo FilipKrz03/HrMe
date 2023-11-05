@@ -40,7 +40,7 @@ namespace Application.CQRS.WageQueries.GetEmployeesWagesForMonth
             }
 
             var employeesWithWorkDaysAndPaymentInfoForMonth =
-                await _employeeRepository.GetEmployeeWithPaymentDataForMonth
+                await _employeeRepository.GetEmployeesWithPaymentDataForMonth
                 (request.CompanyId, request.Year, request.Month, request.ResourceParameters);
 
             var listOfEmloyeesWithWorkDaysAndPaymentInfoForMonth

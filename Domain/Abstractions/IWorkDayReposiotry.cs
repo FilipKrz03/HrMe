@@ -24,6 +24,5 @@ namespace Domain.Abstractions
 
         Task<bool> OtherWorkDayExist(DateTime workDayDate, Guid employeeId, Guid workDayId);
 
-        Task<IEnumerable<EmployeeWorkDay>>GetWorkDaysForMonth(Guid employeeId, int year, int month);
     }
 }

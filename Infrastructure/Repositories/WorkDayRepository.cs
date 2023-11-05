@@ -90,14 +90,5 @@ namespace Infrastructure.Repositories
                 && w.EmployeeId == employeeId
                 && w.Id != workDayId);
         }
-
-        public async Task<IEnumerable<EmployeeWorkDay>> 
-            GetWorkDaysForMonth(Guid employeeId , int year , int month)
-        {
-            return await Query
-                .Where(w => w.WorkDayDate.Year == year
-                && w.WorkDayDate.Month == month)
-                .ToListAsync();
-        }
     }
 }
