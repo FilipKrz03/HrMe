@@ -37,7 +37,7 @@ namespace Web.Controllers
         public async Task<ActionResult<Response<PagedList<WageResponse>>>>
             GetWagesForEmployees(int year, int monthNumber, [FromQuery] ResourceParameters resourceParameters)
         {
-            var companyId = _userService.GetUserId();
+            var companyId = _userService.GetCompanyId();
 
             GetEmployeesWagesForMonthQuery query =
                 new(resourceParameters, companyId, year, monthNumber);
@@ -70,7 +70,7 @@ namespace Web.Controllers
         public async Task<ActionResult<Response<WageResponse>>>
             GetWageForMonth(Guid employeeId, int year, int monthNumber)
         {
-            Guid companyId = _userService.GetUserId();
+            Guid companyId = _userService.GetCompanyId();
 
             GetWageForMonthQuery query = new(companyId, employeeId, monthNumber, year);
 

@@ -39,7 +39,7 @@ namespace Web.Controllers
         [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<EmployeeResponse>>> GetEmployee(Guid employeeId)
         {
-            var companyGuid = _userService.GetUserId();
+            var companyGuid = _userService.GetCompanyId();
 
             GetEmployeeQuery query = new(employeeId, companyGuid);
 
@@ -64,7 +64,7 @@ namespace Web.Controllers
         [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<EmployeeResponse>>> CreateEmployee(EmployeeRequest request)
         {
-            var companyGuid = _userService.GetUserId();
+            var companyGuid = _userService.GetCompanyId();
 
             CreateEmployeeCommand command = new(companyGuid, request.FirstName, request.LastName
                 , request.Position, request.Email, request.DateOfBirth);
@@ -85,7 +85,7 @@ namespace Web.Controllers
         public async Task<ActionResult<Response<PagedList<EmployeeResponse>>>>
             GetEmployees([FromQuery] ResourceParameters resourceParameters)
         {
-            var companyGuid = _userService.GetUserId();
+            var companyGuid = _userService.GetCompanyId();
 
             GetEmployeesQuery query = new(companyGuid, resourceParameters);
 
@@ -116,7 +116,7 @@ namespace Web.Controllers
         [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<bool>>> DeleteEmployee(Guid employeeId)
         {
-            var companyGuid = _userService.GetUserId();
+            var companyGuid = _userService.GetCompanyId();
 
             DeleteEmployeeCommand command = new(companyGuid, employeeId);
 
@@ -132,7 +132,7 @@ namespace Web.Controllers
         public async Task<ActionResult<Response<EmployeeResponse>>>
             PutEmployee(Guid employeeId, EmployeeRequest request)
         {
-            var companyGuid = _userService.GetUserId();
+            var companyGuid = _userService.GetCompanyId();
 
             PutEmployeeComand command = new(companyGuid, employeeId, request.FirstName, request.LastName,
                 request.Position, request.Email, request.DateOfBirth);

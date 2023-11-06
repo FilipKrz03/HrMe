@@ -8,7 +8,7 @@ namespace Domain.Abstractions
 {
     public interface IUserService
     {
-        public Guid GetUserId();
+        public Guid GetCompanyId();
 
         public Guid GetEmployeeId();
     }

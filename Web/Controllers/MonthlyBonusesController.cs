@@ -38,7 +38,7 @@ namespace Web.Controllers
         public async Task<ActionResult<Response<MonthlyBonusResponse>>>
             GetMonthlyBonus(Guid employeeId, Guid monthlyBonusId)
         {
-            var companyId = _userService.GetUserId();
+            var companyId = _userService.GetCompanyId();
 
             GetMonthlyBonusCommand command = new(monthlyBonusId, companyId, employeeId);
 
@@ -65,7 +65,7 @@ namespace Web.Controllers
         public async Task<ActionResult<Response<MonthlyBonusResponse>>>
             CreateMonthlyBonus(Guid employeeId, MonthlyBonusRequest request)
         {
-            var companyId = _userService.GetUserId();
+            var companyId = _userService.GetCompanyId();
 
             CreateMonthlyBonusCommand command
                 = new(companyId, employeeId, request.Year, request.Month, request.BonusAmount, request.BonusInPercent);
@@ -85,7 +85,7 @@ namespace Web.Controllers
         public async Task<ActionResult<Response<PagedList<MonthlyBonusResponse>>>>
             GetMonthlyBonuses(Guid employeeId, [FromQuery] ResourceParameters resourceParameters)
         {
-            var companyId = _userService.GetUserId();
+            var companyId = _userService.GetCompanyId();
 
             GetMonthlyBonusesQuery query = new(companyId, employeeId, resourceParameters);
 
@@ -130,7 +130,7 @@ namespace Web.Controllers
         public async Task<ActionResult<Response<bool>>>
             DeleteMonthlyBonus(Guid employeeId, Guid monthlyBonusId)
         {
-            var companyId = _userService.GetUserId();
+            var companyId = _userService.GetCompanyId();
 
             DeleteMonthlyBonusCommand command = new(companyId, employeeId, monthlyBonusId);
 
@@ -145,7 +145,7 @@ namespace Web.Controllers
         public async Task<ActionResult<Response<MonthlyBonusResponse>>>
             PutMonthlyBonus(Guid employeeId, Guid monthlyBonusId, MonthlyBonusRequest request)
         {
-            var companyId = _userService.GetUserId();
+            var companyId = _userService.GetCompanyId();
 
             PutMonthlyBonusCommand command = new(companyId, employeeId, monthlyBonusId,
                 request.Year, request.Month, request.BonusAmount, request.BonusInPercent);

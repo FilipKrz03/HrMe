@@ -13,7 +13,7 @@ namespace Web.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public Guid GetUserId()
+        public Guid GetCompanyId()
         {
             Guid result = Guid.Empty;
 

@@ -41,7 +41,7 @@ namespace Web.Controllers
         public async Task<ActionResult<Response<PaymentInfoResponse>>> GetPaymentInfo
            (Guid employeeId, Guid paymentInfoId)
         {
-            var companyId = _userService.GetUserId();
+            var companyId = _userService.GetCompanyId();
 
             GetPaymentInfoQuery query = new
             (companyId, employeeId, paymentInfoId);
@@ -67,7 +67,7 @@ namespace Web.Controllers
         [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<PaymentInfoResponse>>> CreatePaymentInfo(Guid employeeId, PaymentInfoRequest request)
         {
-            var companyId = _userService.GetUserId();
+            var companyId = _userService.GetCompanyId();
 
             CreatePaymentInfoCommand command = new(companyId, employeeId, request.HourlyRateBrutto,
                 request.ContractType, request.StartOfContractDate, request.EndOfContractDate);
@@ -87,7 +87,7 @@ namespace Web.Controllers
         public async Task<ActionResult<Response<PagedList<PaymentInfoResponse>>>>
             GetPaymentInfos(Guid employeeId, [FromQuery] ResourceParameters resourceParameters)
         {
-            var companyId = _userService.GetUserId();
+            var companyId = _userService.GetCompanyId();
 
             GetPaymentInfosQuery query = new(companyId, employeeId, resourceParameters);
 
@@ -130,7 +130,7 @@ namespace Web.Controllers
         [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<bool>>> DeletePaymentInfo(Guid employeeId, Guid paymentInfoId)
         {
-            var comapnyGuid = _userService.GetUserId();
+            var comapnyGuid = _userService.GetCompanyId();
 
             DeletePaymentInfoCommand command = new(comapnyGuid, employeeId, paymentInfoId);
 
@@ -145,7 +145,7 @@ namespace Web.Controllers
         public async Task<ActionResult<Response<PaymentInfoResponse>>>
             PutPaymentInfo(Guid employeeId, Guid paymentInfoId, PaymentInfoRequest request)
         {
-            var companyGuid = _userService.GetUserId();
+            var companyGuid = _userService.GetCompanyId();
 
             PutPaymentInfoCommand command = new(companyGuid, employeeId, paymentInfoId
                 , request.HourlyRateBrutto, request.ContractType, request.StartOfContractDate, request.EndOfContractDate);

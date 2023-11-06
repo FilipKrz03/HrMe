@@ -39,7 +39,7 @@ namespace Web.Controllers
         [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<WorkDayResponse>>> GetEmployeeWorkDay(Guid employeeId, Guid workDayId)
         {
-            var companyId = _userService.GetUserId();
+            var companyId = _userService.GetCompanyId();
 
             GetWorkDayQuery query = new(companyId, employeeId, workDayId);
 
@@ -63,7 +63,7 @@ namespace Web.Controllers
         [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<WorkDayResponse>>> CreateEmployeeWorkDay(Guid employeeId, WorkDayRequest request)
         {
-            var comapnyId = _userService.GetUserId();
+            var comapnyId = _userService.GetCompanyId();
 
             CreateWorkDayCommand command =
                 new(comapnyId, employeeId, request.WorkDayDate, request.StartTime, request.EndTime);
@@ -83,7 +83,7 @@ namespace Web.Controllers
         public async Task<ActionResult<Response<PagedList<WorkDayResponse>>>> GetWorkDays
             (Guid employeeId, [FromQuery] ResourceParameters resourceParameters)
         {
-            var companyId = _userService.GetUserId();
+            var companyId = _userService.GetCompanyId();
 
             GetWorkDaysQuery query = new(companyId, employeeId, resourceParameters);
 
@@ -125,7 +125,7 @@ namespace Web.Controllers
         [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<bool>>> DeleteWorkDay(Guid employeeId, Guid workDayId)
         {
-            var companyId = _userService.GetUserId();
+            var companyId = _userService.GetCompanyId();
 
             DeleteWorkDayCommand command = new(companyId, employeeId, workDayId);
 
@@ -141,7 +141,7 @@ namespace Web.Controllers
         public async Task<ActionResult<Response<WorkDayResponse>>>
             PutWorkDay(Guid employeeId, Guid workDayId, WorkDayRequest request)
         {
-            var comapnyId = _userService.GetUserId();
+            var comapnyId = _userService.GetCompanyId();
 
             PutWorkDayCommand command = new(comapnyId, employeeId, workDayId, request.WorkDayDate,
                 request.StartTime, request.EndTime);
