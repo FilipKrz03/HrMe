@@ -67,6 +67,7 @@ namespace Web.Controllers
                 result.Value);
         }
 
+        [Authorize(Roles = "Company")]
         [HttpGet]
         public async Task<ActionResult<Response<PagedList<EmployeeResponse>>>>
             GetEmployees([FromQuery] ResourceParameters resourceParameters)

@@ -16,6 +16,8 @@ namespace Domain.Abstractions
 
         Task<bool> EmployeExistWithEmailInCompanyAsync(string email, Guid companyId);
 
+        Task<Employee?> GetEmployeeByEmial(string email);
+
         Task InsertEmployee(Employee employee);
 
         Task<Employee?> GetEmployeeAsync(Guid employeeId, Guid companyId);

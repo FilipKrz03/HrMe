@@ -151,5 +151,10 @@ namespace Infrastructure.Repositories
                 .Where(m => m.Month == month && m.Year == year && m.EmployeeId == employeeId))
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<Employee?> GetEmployeeByEmial(string email)
+        {
+            return await Query.Where(e => e.Email == email).FirstOrDefaultAsync();
+        }
     }
 }

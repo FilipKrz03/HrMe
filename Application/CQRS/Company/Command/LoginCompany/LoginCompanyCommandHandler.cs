@@ -43,7 +43,7 @@ namespace Application.CQRS.Company.Command.LoginCompany
                 return response.SetError(403, "Invalid password");
             }
 
-            string token = _jwtProvider.Generate(request.Email, company.Id);
+            string token = _jwtProvider.Generate(request.Email, company.Id , true);
 
             response.Value = token;
 
