@@ -36,6 +36,7 @@ namespace Web.Controllers
         }
 
         [HttpGet("{paymentInfoId}", Name = "GetPaymentInfo")]
+        [Authorize(Roles = "Company")]
 
         public async Task<ActionResult<Response<PaymentInfoResponse>>> GetPaymentInfo
            (Guid employeeId, Guid paymentInfoId)
@@ -51,7 +52,19 @@ namespace Web.Controllers
                 : Ok(result.Value);
         }
 
+        [HttpGet]
+        [Route("~/api/employee/paymentinfos/{paymentInfoId}")]
+        [Authorize(Roles = "Employee")]
+        public async Task<ActionResult<Response<PaymentInfoResponse>>>
+            GetPaymentInfoByEmployee(Guid paymentInfoId)
+        {
+            var employeeId = _userService.GetEmployeeId();
+
+            return await GetPaymentInfo(employeeId, paymentInfoId);
+        }
+
         [HttpPost]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<PaymentInfoResponse>>> CreatePaymentInfo(Guid employeeId, PaymentInfoRequest request)
         {
             var companyId = _userService.GetUserId();
@@ -70,6 +83,7 @@ namespace Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<PagedList<PaymentInfoResponse>>>>
             GetPaymentInfos(Guid employeeId, [FromQuery] ResourceParameters resourceParameters)
         {
@@ -100,7 +114,20 @@ namespace Web.Controllers
             return Ok(result.Value);
         }
 
+        [HttpGet]
+        [Route("~/api/employee/paymentinfos")]
+        [Authorize(Roles = "Employee")]
+        public async Task<ActionResult<Response<PagedList<PaymentInfoResponse>>>>
+            GetPaymentInfosByEmployee([FromQuery] ResourceParameters resourceParameters)
+        {
+            var employeeId = _userService.GetEmployeeId();
+
+            return await GetPaymentInfos(employeeId, resourceParameters);
+        }
+
+
         [HttpDelete("{paymentInfoId}")]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<bool>>> DeletePaymentInfo(Guid employeeId, Guid paymentInfoId)
         {
             var comapnyGuid = _userService.GetUserId();
@@ -114,22 +141,23 @@ namespace Web.Controllers
         }
 
         [HttpPut("{paymentInfoId}")]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<PaymentInfoResponse>>>
-            PutPaymentInfo(Guid employeeId , Guid paymentInfoId , PaymentInfoRequest request)
+            PutPaymentInfo(Guid employeeId, Guid paymentInfoId, PaymentInfoRequest request)
         {
             var companyGuid = _userService.GetUserId();
 
-            PutPaymentInfoCommand command = new(companyGuid , employeeId  , paymentInfoId
-                , request.HourlyRateBrutto , request.ContractType , request.StartOfContractDate , request.EndOfContractDate);
+            PutPaymentInfoCommand command = new(companyGuid, employeeId, paymentInfoId
+                , request.HourlyRateBrutto, request.ContractType, request.StartOfContractDate, request.EndOfContractDate);
 
             Response<PaymentInfoResponse> result = await _mediator.Send(command);
 
-            if(result.IsError == true)
+            if (result.IsError == true)
             {
                 return StatusCode(result.StatusCode, result.Message);
             }
 
-            if(result.Value != null)
+            if (result.Value != null)
             {
                 return CreatedAtRoute("GetPaymentInfo", new
                 {

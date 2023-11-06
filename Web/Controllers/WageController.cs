@@ -33,6 +33,7 @@ namespace Web.Controllers
         }
 
         [HttpGet("wages/{year}/{monthNumber}")]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<PagedList<WageResponse>>>>
             GetWagesForEmployees(int year, int monthNumber, [FromQuery] ResourceParameters resourceParameters)
         {
@@ -65,6 +66,7 @@ namespace Web.Controllers
         }
 
         [HttpGet("{employeeId}/wages/{year}/{monthNumber}")]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<WageResponse>>>
             GetWageForMonth(Guid employeeId, int year, int monthNumber)
         {
@@ -76,6 +78,17 @@ namespace Web.Controllers
 
             return result.IsError == true ? StatusCode(result.StatusCode, result.Message)
                 : Ok(result.Value);
+        }
+
+        [HttpGet]
+        [Route("~/api/employee/wages/{year}/{monthNumber}")]
+        [Authorize(Roles = "Employee")]
+        public async Task<ActionResult<Response<WageResponse>>>
+            GetWageForMonthByEmployee(int year, int monthNumber)
+        {
+            var employeeId = _userService.GetEmployeeId();
+
+            return await GetWageForMonth(employeeId, year, monthNumber);
         }
     }
 }

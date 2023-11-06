@@ -21,14 +21,19 @@ namespace Infrastructure.Authentiaction
             _configuration = configuration;
         }
 
-        public string Generate(string email, Guid ObjectGuid , bool isCompany)
+        public string Generate(string email, Guid ObjectGuid , bool isCompany , Guid? employeeId)
         {
-            var claims = new Claim[]
+            var claims = new List<Claim>
             {
             new(JwtRegisteredClaimNames.Email , email) ,
             new(ClaimTypes.PrimarySid , ObjectGuid.ToString()) , 
             new(ClaimTypes.Role , isCompany ? "Company" : "Employee")
             };
+
+            if(employeeId != null )
+            {
+                claims.Add(new(ClaimTypes.Anonymous, employeeId.ToString()!));
+            }
 
             var key = _configuration["Jwt:Key"];
             var issuer = _configuration["Jwt:Issuer"];

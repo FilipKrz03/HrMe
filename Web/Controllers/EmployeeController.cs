@@ -34,8 +34,9 @@ namespace Web.Controllers
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
-        [HttpGet("{employeeId}", Name = "GetEmployee")]
 
+        [HttpGet("{employeeId}", Name = "GetEmployee")]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<EmployeeResponse>>> GetEmployee(Guid employeeId)
         {
             var companyGuid = _userService.GetUserId();
@@ -48,7 +49,19 @@ namespace Web.Controllers
                 : Ok(result.Value);
         }
 
+        [HttpGet]
+        [Route("~/api/employee")]
+        [Authorize(Roles = "Employee")]
+        public async Task<ActionResult<Response<EmployeeResponse>>>
+           GetEmployeeByHimselt()
+        {
+            var employeeGuid = _userService.GetEmployeeId();
+
+            return await GetEmployee(employeeGuid);
+        }
+
         [HttpPost]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<EmployeeResponse>>> CreateEmployee(EmployeeRequest request)
         {
             var companyGuid = _userService.GetUserId();
@@ -67,8 +80,8 @@ namespace Web.Controllers
                 result.Value);
         }
 
-        [Authorize(Roles = "Company")]
         [HttpGet]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<PagedList<EmployeeResponse>>>>
             GetEmployees([FromQuery] ResourceParameters resourceParameters)
         {
@@ -100,6 +113,7 @@ namespace Web.Controllers
         }
 
         [HttpDelete("{employeeId}")]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<bool>>> DeleteEmployee(Guid employeeId)
         {
             var companyGuid = _userService.GetUserId();
@@ -113,6 +127,8 @@ namespace Web.Controllers
         }
 
         [HttpPut("{employeeId}")]
+        [Authorize(Roles = "Company")]
+
         public async Task<ActionResult<Response<EmployeeResponse>>>
             PutEmployee(Guid employeeId, EmployeeRequest request)
         {

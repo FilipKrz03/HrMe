@@ -34,6 +34,7 @@ namespace Web.Controllers
         }
 
         [HttpGet("{monthlyBonusId}", Name = "GetMonthlyBonus")]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<MonthlyBonusResponse>>>
             GetMonthlyBonus(Guid employeeId, Guid monthlyBonusId)
         {
@@ -47,7 +48,20 @@ namespace Web.Controllers
                 : Ok(result.Value);
         }
 
+
+        [HttpGet]
+        [Route("~/api/employee/monthlybonuses/{monthlyBonusId}")]
+        [Authorize(Roles = "Employee")]
+        public async Task<ActionResult<Response<MonthlyBonusResponse>>>
+            GetMonthlyBonusByEmployee(Guid monthlyBonusId)
+        {
+            var employeeId = _userService.GetEmployeeId();
+
+            return await GetMonthlyBonus(employeeId, monthlyBonusId);
+        }
+
         [HttpPost]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<MonthlyBonusResponse>>>
             CreateMonthlyBonus(Guid employeeId, MonthlyBonusRequest request)
         {
@@ -67,6 +81,7 @@ namespace Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<PagedList<MonthlyBonusResponse>>>>
             GetMonthlyBonuses(Guid employeeId, [FromQuery] ResourceParameters resourceParameters)
         {
@@ -97,7 +112,21 @@ namespace Web.Controllers
             return Ok(result.Value);
         }
 
+
+        [HttpGet]
+        [Route("~/api/employee/monthlybonuses")]
+        [Authorize(Roles = "Employee")]
+        public async Task<ActionResult<Response<PagedList<MonthlyBonusResponse>>>>
+            GetMonthlyBonusesByEmployee([FromQuery] ResourceParameters resourceParameters)
+        {
+            var employeeId = _userService.GetEmployeeId();
+
+           return await GetMonthlyBonuses(employeeId, resourceParameters);
+        }
+
+
         [HttpDelete("{monthlyBonusId}")]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<bool>>>
             DeleteMonthlyBonus(Guid employeeId, Guid monthlyBonusId)
         {
@@ -112,6 +141,7 @@ namespace Web.Controllers
         }
 
         [HttpPut("{monthlyBonusId}")]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<MonthlyBonusResponse>>>
             PutMonthlyBonus(Guid employeeId, Guid monthlyBonusId, MonthlyBonusRequest request)
         {

@@ -36,6 +36,7 @@ namespace Web.Controllers
         }
 
         [HttpGet("{workDayId}", Name = "GetWorkDay")]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<WorkDayResponse>>> GetEmployeeWorkDay(Guid employeeId, Guid workDayId)
         {
             var companyId = _userService.GetUserId();
@@ -48,7 +49,18 @@ namespace Web.Controllers
                   Ok(result.Value);
         }
 
+        [HttpGet]
+        [Route("~/api/employee/workdays/{workDayId}")]
+        [Authorize(Roles = "Employee")]
+        public async Task<ActionResult<Response<WorkDayResponse>>> GetWorkDayByEmployee(Guid workDayId)
+        {
+            var employeeId = _userService.GetEmployeeId();
+
+            return await GetEmployeeWorkDay(employeeId, workDayId);
+        }
+
         [HttpPost]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<WorkDayResponse>>> CreateEmployeeWorkDay(Guid employeeId, WorkDayRequest request)
         {
             var comapnyId = _userService.GetUserId();
@@ -67,6 +79,7 @@ namespace Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<PagedList<WorkDayResponse>>>> GetWorkDays
             (Guid employeeId, [FromQuery] ResourceParameters resourceParameters)
         {
@@ -97,7 +110,19 @@ namespace Web.Controllers
             return Ok(result.Value);
         }
 
+        [HttpGet]
+        [Route("~/api/employee/workdays")]
+        [Authorize(Roles = "Employee")]
+        public async Task<ActionResult<Response<PagedList<WorkDayResponse>>>> GetWorkDaysByEmployee
+            ([FromQuery] ResourceParameters resourceParameters)
+        {
+            var employeeId = _userService.GetEmployeeId();
+
+            return await GetWorkDays(employeeId, resourceParameters);
+        }
+
         [HttpDelete("{workDayId}")]
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult<Response<bool>>> DeleteWorkDay(Guid employeeId, Guid workDayId)
         {
             var companyId = _userService.GetUserId();
@@ -111,6 +136,7 @@ namespace Web.Controllers
         }
 
         [HttpPut("{workDayId}")]
+        [Authorize(Roles = "Company")]
 
         public async Task<ActionResult<Response<WorkDayResponse>>>
             PutWorkDay(Guid employeeId, Guid workDayId, WorkDayRequest request)

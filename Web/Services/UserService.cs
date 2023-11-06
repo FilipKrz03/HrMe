@@ -19,8 +19,21 @@ namespace Web.Services
 
             if (_httpContextAccessor.HttpContext is not null)
             {
-                result = 
+                result =
                     Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.PrimarySid));
+            }
+
+            return result;
+        }
+
+        public Guid GetEmployeeId()
+        {
+            Guid result = Guid.Empty;
+
+            if (_httpContextAccessor.HttpContext is not null)
+            {
+                result =
+                    Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Anonymous));
             }
 
             return result;
