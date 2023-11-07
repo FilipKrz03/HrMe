@@ -23,6 +23,9 @@ namespace Domain.Entities
         public string Email { get; set; } = string.Empty;
 
         [Required]
+        public string Password {  get; set; } = string.Empty;   
+
+        [Required]
         public DateTime DateOfBirth { get; set; }
 
         public ICollection<EmployeeWorkDay> WorkDays { get; set; }

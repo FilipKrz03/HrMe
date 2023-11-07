@@ -22,8 +22,10 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
 
         public DateTime DateOfBirth { get; set; }
 
+        public string? Password {  get; set; } 
+
         public CreateEmployeeCommand(Guid companyGuid , string firstName , string lastName , 
-            string position , string email , DateTime dateOffBirth)
+            string position , string email , DateTime dateOffBirth , string? password)
         {
             CompanyGuid = companyGuid;
             FirstName = firstName;  
@@ -31,6 +33,7 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
             Position = position;
             Email = email;
             DateOfBirth = dateOffBirth;
+            Password = password;
         }
     }
 }

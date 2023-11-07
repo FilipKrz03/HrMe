@@ -17,5 +17,7 @@ namespace Application.CQRS.Employee.Command
         public string Position { get; set; } = string.Empty;
 
         public DateTime DateOfBirth { get; set; }
+
+        public string? Password {  get; set; }  
     }
 }

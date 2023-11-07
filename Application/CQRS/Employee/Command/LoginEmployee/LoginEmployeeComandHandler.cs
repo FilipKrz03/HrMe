@@ -32,6 +32,13 @@ namespace Application.CQRS.Employee.Command.LoginEmployee
                 return response.SetError(404, $"Could not find employee with email {request.Email}");
             }
 
+            bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(request.Password , employee.Password);
+
+            if(!isPasswordCorrect)
+            {
+                return response.SetError(403, "Password is not correct");
+            }
+
             string token = _jwtProvider.Generate(request.Email, employee.CompanyId , false , employee.Id);
 
             response.Value = token;

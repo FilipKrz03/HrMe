@@ -11,5 +11,6 @@ namespace Application.CQRS.Employee.Command.LoginEmployee
     {
         public string Email {  get; set; } = string.Empty;
 
+        public string Password { get; set; } = string.Empty;   
     }
 }

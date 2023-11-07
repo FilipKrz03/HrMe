@@ -67,7 +67,7 @@ namespace Web.Controllers
             var companyGuid = _userService.GetCompanyId();
 
             CreateEmployeeCommand command = new(companyGuid, request.FirstName, request.LastName
-                , request.Position, request.Email, request.DateOfBirth);
+                , request.Position, request.Email, request.DateOfBirth , request.Password);
 
             Response<EmployeeResponse> result = await _mediator.Send(command);
 
