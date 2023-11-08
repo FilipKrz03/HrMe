@@ -24,6 +24,7 @@ namespace Application
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSingleton<IWageService, WageService>();
+            services.AddTransient<IMailSendingService, MailSedningService>();
 
             return services;
         }

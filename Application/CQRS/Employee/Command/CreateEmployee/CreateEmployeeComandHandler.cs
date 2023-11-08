@@ -19,12 +19,14 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
         private readonly IMapper _mapper;
         private readonly IEmployeeRepository _employeeRepository;
         private readonly ICompanyRepository _companyRepository;
+        private readonly IMailSendingService _mailSendingService;
         public CreateEmployeeComandHandler(IMapper mapper, ICompanyRepository companyRepository,
-            IEmployeeRepository employeeRepository)
+            IEmployeeRepository employeeRepository, IMailSendingService mailSendingService)
         {
             _mapper = mapper;
             _companyRepository = companyRepository;
             _employeeRepository = employeeRepository;
+            _mailSendingService = mailSendingService;
         }
         public async Task<Response<EmployeeResponse>> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
         {
@@ -35,7 +37,7 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
                 return response.SetError(500, "We occured some unexpected error");
             }
 
-            if (!await _employeeRepository
+            if (await _employeeRepository
                 .EmployeExistWithEmailInCompanyAsync(request.Email, request.CompanyGuid))
             {
                 return response.SetError(409,
@@ -49,8 +51,6 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
 
             string password = string.Empty;
 
-            string hashedPwd = string.Empty;
-
             if (request.Password == null)
             {
                 string allowed = "ABCDEFGHIJKLMONOPQRSTUVWXYZabcdefghijklmonopqrstuvwxyz0123456789";
@@ -59,7 +59,7 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
 
                 for (int i = 0; i < 8; i++)
                 {
-                    randomChars[i] = allowed[random.Next(0, 9)];
+                    randomChars[i] = allowed[random.Next(0, allowed.Length)];
                 }
 
                 password = new string(randomChars);
@@ -69,7 +69,13 @@ namespace Application.CQRS.Employee.Command.CreateEmployee
                 password = request.Password;
             }
 
-            hashedPwd = BCrypt.Net.BCrypt.HashPassword(password);
+            string hashedPwd = BCrypt.Net.BCrypt.HashPassword(password);
+
+            _mailSendingService.SendEmail
+                (request.Email, "New account in HrMe application ! " ,
+                "Your employee account has been created " +
+                $"Your password : {password}" +
+                $" Have a nice day ! ");
 
             employee.Password = hashedPwd;
 

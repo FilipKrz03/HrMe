@@ -20,7 +20,7 @@ namespace Application.CQRS.Company.Command.LoginCompany
         public LoginCompanyCommandHandler(IJwtProvider jwtProvider, ICompanyRepository companyRepository)
         {
             _jwtProvider = jwtProvider;
-            _companyRepository = companyRepository; 
+            _companyRepository = companyRepository;
         }
 
         public async Task<Response<string>> Handle(LoginCompanyCommand request, CancellationToken cancellationToken)
