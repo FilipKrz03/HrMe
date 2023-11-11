@@ -8,16 +8,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tests.Common;
 
 namespace Tests.Companies
 {
-    public class CreateCompanyCommandHandlerTests
+    public class CreateCompanyCommandHandlerTests : IClassFixture<CommandTestBase>
     {
-        private readonly Mock<ICompanyRepository> _companyRepository;
 
-        public CreateCompanyCommandHandlerTests()
+        private readonly CommandTestBase _commandTestBase;
+
+        public CreateCompanyCommandHandlerTests(CommandTestBase commandTestBase)
         {
-            _companyRepository = new();
+            _commandTestBase = commandTestBase;
         }
 
         [Fact]
@@ -30,10 +32,10 @@ namespace Tests.Companies
                 Password = "Dummy password",
             };
 
-            _companyRepository.Setup(x => x.CompanyExistByEmailAsync(
+            _commandTestBase._companyRepositoryMock.Setup(x => x.CompanyExistByEmailAsync(
                 It.IsAny<string>())).ReturnsAsync(true);
 
-            var handler = new CreateCompanyHandler(_companyRepository.Object);
+            var handler = new CreateCompanyHandler(_commandTestBase._companyRepositoryMock.Object);
 
             var result = await handler.Handle(command, default);
 
@@ -50,12 +52,14 @@ namespace Tests.Companies
                 Password = "Dummy password",
             };
 
-            _companyRepository.Setup(x => x.CompanyExistByEmailAsync(
+            _commandTestBase._companyRepositoryMock.Setup(x => x.CompanyExistByEmailAsync(
                It.IsAny<string>())).ReturnsAsync(false);
 
-            var handler = new CreateCompanyHandler(_companyRepository.Object);
+            var handler = new CreateCompanyHandler(_commandTestBase._companyRepositoryMock.Object);
 
             var result = await handler.Handle(command, default);
+
+            _commandTestBase._companyRepositoryMock.Invocations.Clear();
 
             Assert.False(result.IsError);
             Assert.IsType<string>(result.Value);
@@ -71,14 +75,14 @@ namespace Tests.Companies
                 Password = "Dummy password",
             };
 
-            _companyRepository.Setup(x => x.CompanyExistByEmailAsync(
+            _commandTestBase._companyRepositoryMock.Setup(x => x.CompanyExistByEmailAsync(
                It.IsAny<string>())).ReturnsAsync(false);
 
-            var handler = new CreateCompanyHandler(_companyRepository.Object);
+            var handler = new CreateCompanyHandler(_commandTestBase._companyRepositoryMock.Object);
 
             var result = await handler.Handle(command, default);
 
-            _companyRepository.Verify(x => x.InsertCompany(
+            _commandTestBase._companyRepositoryMock.Verify(x => x.InsertCompany(
                It.Is<Company>(c => c.Email == command.Email)) , Times.Once);
         }
     }
