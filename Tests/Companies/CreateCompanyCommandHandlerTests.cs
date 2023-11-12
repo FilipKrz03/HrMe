@@ -12,16 +12,8 @@ using Tests.Common;
 
 namespace Tests.Companies
 {
-    public class CreateCompanyCommandHandlerTests : IClassFixture<CommandTestBase>
+    public class CreateCompanyCommandHandlerTests : CommandTestBase
     {
-
-        private readonly CommandTestBase _commandTestBase;
-
-        public CreateCompanyCommandHandlerTests(CommandTestBase commandTestBase)
-        {
-            _commandTestBase = commandTestBase;
-        }
-
         [Fact]
         public async Task Handle_Should_ReturnFailureResult_WhenCompanyEmailAlreadyExist()
         {
@@ -32,10 +24,10 @@ namespace Tests.Companies
                 Password = "Dummy password",
             };
 
-            _commandTestBase._companyRepositoryMock.Setup(x => x.CompanyExistByEmailAsync(
+            _companyRepositoryMock.Setup(x => x.CompanyExistByEmailAsync(
                 It.IsAny<string>())).ReturnsAsync(true);
 
-            var handler = new CreateCompanyHandler(_commandTestBase._companyRepositoryMock.Object);
+            var handler = new CreateCompanyHandler(_companyRepositoryMock.Object);
 
             var result = await handler.Handle(command, default);
 
@@ -52,14 +44,12 @@ namespace Tests.Companies
                 Password = "Dummy password",
             };
 
-            _commandTestBase._companyRepositoryMock.Setup(x => x.CompanyExistByEmailAsync(
+            _companyRepositoryMock.Setup(x => x.CompanyExistByEmailAsync(
                It.IsAny<string>())).ReturnsAsync(false);
 
-            var handler = new CreateCompanyHandler(_commandTestBase._companyRepositoryMock.Object);
+            var handler = new CreateCompanyHandler(_companyRepositoryMock.Object);
 
             var result = await handler.Handle(command, default);
-
-            _commandTestBase._companyRepositoryMock.Invocations.Clear();
 
             Assert.False(result.IsError);
             Assert.IsType<string>(result.Value);
@@ -75,14 +65,14 @@ namespace Tests.Companies
                 Password = "Dummy password",
             };
 
-            _commandTestBase._companyRepositoryMock.Setup(x => x.CompanyExistByEmailAsync(
+            _companyRepositoryMock.Setup(x => x.CompanyExistByEmailAsync(
                It.IsAny<string>())).ReturnsAsync(false);
 
-            var handler = new CreateCompanyHandler(_commandTestBase._companyRepositoryMock.Object);
+            var handler = new CreateCompanyHandler(_companyRepositoryMock.Object);
 
             var result = await handler.Handle(command, default);
 
-            _commandTestBase._companyRepositoryMock.Verify(x => x.InsertCompany(
+            _companyRepositoryMock.Verify(x => x.InsertCompany(
                It.Is<Company>(c => c.Email == command.Email)) , Times.Once);
         }
     }
