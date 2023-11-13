@@ -18,22 +18,14 @@ namespace Tests.PaymentInfos
 {
     public class GetPaymentInfosQueryHandlerTests : CommandTestBase
     {
-        private readonly IMapper _mapper;
+        private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<IPropertyMappingService> _propertyMappingServiceMock;
 
         public GetPaymentInfosQueryHandlerTests()
         {
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap(typeof(PagedList<>), typeof(PagedList<>)).ConvertUsing(typeof(PagedListConverter<,>));
-                cfg.CreateMap<EmployeePaymentInfo, PaymentInfoResponse>();
-            });
-
-            _mapper = mapperConfiguration.CreateMapper();
-
             _propertyMappingServiceMock = new();
+            _mapperMock = new();
         }
-
 
         [Fact]
         public async Task Handler_Should_ReturnFailureResult_WhenOneOfOrderByFieldsDoNotExistInPaymentInfoFields()
@@ -44,7 +36,7 @@ namespace Tests.PaymentInfos
             _propertyMappingServiceMock.Setup(x => x.PropertyMappingExist<EmployeePaymentInfo, PaymentInfoResponse>(
                 It.IsAny<string>())).Returns(false);
 
-            var handler = new GetPaymentInfosQueryHandler(_mapper, _companyRepositoryMock.Object,
+            var handler = new GetPaymentInfosQueryHandler(_mapperMock.Object, _companyRepositoryMock.Object,
                 _employeeRepositoryMock.Object, _paymentInfoRepositoryMock.Object, _propertyMappingServiceMock.Object);
 
             var result = await handler.Handle(query, default);
@@ -68,7 +60,6 @@ namespace Tests.PaymentInfos
             _employeeRepositoryMock.Setup(x => x.EmployeeExistsInCompanyAsync(
                 It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(true);
 
-
             List<EmployeePaymentInfo> paymentInfos = new()
             {
                 new EmployeePaymentInfo() ,
@@ -80,7 +71,10 @@ namespace Tests.PaymentInfos
                 .ReturnsAsync(new PagedList<EmployeePaymentInfo>(paymentInfos, query.ResourceParameters.PageNumber,
                 query.ResourceParameters.PageSize, 2));
 
-            var handler = new GetPaymentInfosQueryHandler(_mapper, _companyRepositoryMock.Object,
+            _mapperMock.Setup(m => m.Map<PagedList<PaymentInfoResponse>>(It.IsAny<PagedList<EmployeePaymentInfo>>()))
+               .Returns(new PagedList<PaymentInfoResponse>(new List<PaymentInfoResponse>(), 1, 1, 1));
+
+            var handler = new GetPaymentInfosQueryHandler(_mapperMock.Object, _companyRepositoryMock.Object,
                 _employeeRepositoryMock.Object, _paymentInfoRepositoryMock.Object, _propertyMappingServiceMock.Object);
 
             var result = await handler.Handle(query, default);
@@ -88,6 +82,5 @@ namespace Tests.PaymentInfos
             Assert.False(result.IsError);
             Assert.IsType<PagedList<PaymentInfoResponse>>(result.Value);
         }
-
     }
 }

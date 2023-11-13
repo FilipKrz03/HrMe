@@ -15,17 +15,11 @@ namespace Tests.Employees
     public class PutEmployeeComandHandlerTests : CommandTestBase
     {
 
-        private readonly IMapper _mapper;
+        private readonly Mock<IMapper> _mapperMock;
 
         public PutEmployeeComandHandlerTests()
         {
-            var mapperConfiugration = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<PutEmployeeComand, Employee>();
-                cfg.CreateMap<Employee, EmployeeResponse>();
-            });
-
-            _mapper = mapperConfiugration.CreateMapper();
+            _mapperMock = new();
         }
 
         [Fact]
@@ -49,7 +43,7 @@ namespace Tests.Employees
                 .ReturnsAsync(true);
 
             var handler = new PutEmployeeComandHandler
-                (_employeeRepositoryMock.Object, _companyRepositoryMock.Object, _mapper);
+                (_employeeRepositoryMock.Object, _companyRepositoryMock.Object, _mapperMock.Object);
 
             var result = await handler.Handle(command, default);
 
@@ -77,8 +71,14 @@ namespace Tests.Employees
               It.IsAny<Guid>()))
                 .ReturnsAsync(false);
 
+            _mapperMock.Setup(x => x.Map<Employee>(It.IsAny<PutEmployeeComand>()))
+              .Returns(new Employee());
+
+            _mapperMock.Setup(x => x.Map<EmployeeResponse>(It.IsAny<Employee>()))
+                .Returns(new EmployeeResponse());
+
             var handler = new PutEmployeeComandHandler
-                (_employeeRepositoryMock.Object, _companyRepositoryMock.Object, _mapper);
+                (_employeeRepositoryMock.Object, _companyRepositoryMock.Object, _mapperMock.Object);
 
             var result = await handler.Handle(command, default);
 
@@ -105,7 +105,7 @@ namespace Tests.Employees
                 .ReturnsAsync(true);
 
             var handler = new PutEmployeeComandHandler
-                (_employeeRepositoryMock.Object, _companyRepositoryMock.Object, _mapper);
+                (_employeeRepositoryMock.Object, _companyRepositoryMock.Object, _mapperMock.Object);
 
             var result = await handler.Handle(command, default);
 
@@ -133,8 +133,14 @@ namespace Tests.Employees
               It.IsAny<Guid>()))
                 .ReturnsAsync(false);
 
+            _mapperMock.Setup(x => x.Map<Employee>(It.IsAny<PutEmployeeComand>()))
+                .Returns(new Employee());
+
+            _mapperMock.Setup(x => x.Map<EmployeeResponse>(It.IsAny<Employee>()))
+                .Returns(new EmployeeResponse());
+
             var handler = new PutEmployeeComandHandler
-                (_employeeRepositoryMock.Object, _companyRepositoryMock.Object, _mapper);
+                (_employeeRepositoryMock.Object, _companyRepositoryMock.Object, _mapperMock.Object);
 
             var result = await handler.Handle(command, default);
 
@@ -161,8 +167,14 @@ namespace Tests.Employees
               It.IsAny<Guid>()))
                 .ReturnsAsync(false);
 
+            _mapperMock.Setup(x => x.Map<Employee>(It.IsAny<PutEmployeeComand>()))
+                .Returns(new Employee());
+
+            _mapperMock.Setup(x => x.Map<EmployeeResponse>(It.IsAny<Employee>()))
+                .Returns(new EmployeeResponse());
+
             var handler = new PutEmployeeComandHandler
-                (_employeeRepositoryMock.Object, _companyRepositoryMock.Object, _mapper);
+                (_employeeRepositoryMock.Object, _companyRepositoryMock.Object, _mapperMock.Object);
 
             var result = await handler.Handle(command, default);
 

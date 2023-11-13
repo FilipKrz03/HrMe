@@ -1,6 +1,8 @@
 ﻿using Application.CQRS.Employee.Command.CreateEmployee;
+using Application.CQRS.Employee.Command.PutEmployee;
 using AutoMapper;
 using Domain.Abstractions;
+using Domain.Entities;
 using Domain.Responses;
 using Moq;
 using System;
@@ -15,20 +17,13 @@ namespace Tests.Employees
     public class CreateEmployeeCommandHandlerTests : CommandTestBase
     {
 
-        private readonly IMapper _mapper;
+        private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<IMailSendingService> _mailSendingServiceMock;
 
         public CreateEmployeeCommandHandlerTests()
         {
-            var mapperConfig = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<CreateEmployeeCommand, Domain.Entities.Employee>();
-                cfg.CreateMap<Domain.Entities.Employee, EmployeeResponse>();
-            });
-
-            _mapper = mapperConfig.CreateMapper();
-
             _mailSendingServiceMock = new();
+            _mapperMock = new();
         }
 
         [Fact]
@@ -41,7 +36,7 @@ namespace Tests.Employees
                 It.IsAny<Guid>())).ReturnsAsync(false);
 
             var handler = new CreateEmployeeComandHandler
-                (_mapper, _companyRepositoryMock.Object, _employeeRepositoryMock.Object,
+                (_mapperMock.Object, _companyRepositoryMock.Object, _employeeRepositoryMock.Object,
                 _mailSendingServiceMock.Object);
 
             var result = await handler.Handle(command, default);
@@ -63,7 +58,7 @@ namespace Tests.Employees
                It.IsAny<string>(), It.IsAny<Guid>())).ReturnsAsync(true);
 
             var handler = new CreateEmployeeComandHandler
-                (_mapper, _companyRepositoryMock.Object, _employeeRepositoryMock.Object,
+                (_mapperMock.Object, _companyRepositoryMock.Object, _employeeRepositoryMock.Object,
                 _mailSendingServiceMock.Object);
 
             var result = await handler.Handle(command, default);
@@ -76,7 +71,7 @@ namespace Tests.Employees
         public async Task Handler_Should_GeneratePassword_WhenPasswordIsNotEntered()
         {
             var command = new CreateEmployeeCommand
-              (Guid.Empty, "Jan", "Kowalski", "Developer", "email@gmail.com", DateTime.Now , null);
+              (Guid.Empty, "Jan", "Kowalski", "Developer", "email@gmail.com", DateTime.Now, null);
 
             _companyRepositoryMock.Setup(x => x.CompanyExistAsync(
                 It.IsAny<Guid>())).ReturnsAsync(true);
@@ -84,8 +79,14 @@ namespace Tests.Employees
             _employeeRepositoryMock.Setup(x => x.EmployeExistWithEmailInCompanyAsync(
                It.IsAny<string>(), It.IsAny<Guid>())).ReturnsAsync(false);
 
+            _mapperMock.Setup(x => x.Map<Employee>(It.IsAny<CreateEmployeeCommand>()))
+             .Returns(new Employee());
+
+            _mapperMock.Setup(x => x.Map<EmployeeResponse>(It.IsAny<Employee>()))
+                .Returns(new EmployeeResponse());
+
             var handler = new CreateEmployeeComandHandler
-               (_mapper, _companyRepositoryMock.Object, _employeeRepositoryMock.Object,
+               (_mapperMock.Object, _companyRepositoryMock.Object, _employeeRepositoryMock.Object,
                _mailSendingServiceMock.Object);
 
             var result = await handler.Handle(command, default);
@@ -106,8 +107,20 @@ namespace Tests.Employees
             _employeeRepositoryMock.Setup(x => x.EmployeExistWithEmailInCompanyAsync(
                It.IsAny<string>(), It.IsAny<Guid>())).ReturnsAsync(false);
 
+            _mapperMock.Setup(x => x.Map<Employee>(It.IsAny<CreateEmployeeCommand>()))
+             .Returns(new Employee()
+             {
+                 Email = command.Email
+             });
+
+            _mapperMock.Setup(x => x.Map<EmployeeResponse>(It.IsAny<Employee>()))
+                .Returns(new EmployeeResponse()
+                {
+                    Email = command.Email
+                });
+
             var handler = new CreateEmployeeComandHandler
-                (_mapper, _companyRepositoryMock.Object, _employeeRepositoryMock.Object,
+                (_mapperMock.Object, _companyRepositoryMock.Object, _employeeRepositoryMock.Object,
                 _mailSendingServiceMock.Object);
 
             var result = await handler.Handle(command, default);
@@ -128,8 +141,14 @@ namespace Tests.Employees
             _employeeRepositoryMock.Setup(x => x.EmployeExistWithEmailInCompanyAsync(
                It.IsAny<string>(), It.IsAny<Guid>())).ReturnsAsync(false);
 
+            _mapperMock.Setup(x => x.Map<Employee>(It.IsAny<CreateEmployeeCommand>()))
+             .Returns(new Employee());
+
+            _mapperMock.Setup(x => x.Map<EmployeeResponse>(It.IsAny<Employee>()))
+                .Returns(new EmployeeResponse());
+
             var handler = new CreateEmployeeComandHandler
-                (_mapper, _companyRepositoryMock.Object, _employeeRepositoryMock.Object,
+                (_mapperMock.Object, _companyRepositoryMock.Object, _employeeRepositoryMock.Object,
                 _mailSendingServiceMock.Object);
 
             var result = await handler.Handle(command, default);

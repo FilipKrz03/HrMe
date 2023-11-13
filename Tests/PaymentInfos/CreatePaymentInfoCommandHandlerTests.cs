@@ -16,17 +16,11 @@ namespace Tests.PaymentInfos
     public class CreatePaymentInfoCommandHandlerTests : CommandTestBase
     {
 
-        private readonly IMapper _mapper;
+        private readonly Mock<IMapper> _mapperMock;
 
         public CreatePaymentInfoCommandHandlerTests()
         {
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<CreatePaymentInfoCommand, EmployeePaymentInfo>();
-                cfg.CreateMap<EmployeePaymentInfo, PaymentInfoResponse>();
-            });
-
-            _mapper = mapperConfiguration.CreateMapper();
+            _mapperMock = new();
         }
 
         [Fact]
@@ -42,7 +36,7 @@ namespace Tests.PaymentInfos
                 It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync((Employee)null!);
 
 
-            var handler = new CreatePaymentInfoCommandHandler(_mapper, _employeeRepositoryMock.Object,
+            var handler = new CreatePaymentInfoCommandHandler(_mapperMock.Object, _employeeRepositoryMock.Object,
                 _companyRepositoryMock.Object, _paymentInfoRepositoryMock.Object);
 
             var result = await handler.Handle(command, default);
@@ -66,7 +60,7 @@ namespace Tests.PaymentInfos
             _paymentInfoRepositoryMock.Setup(x => x.ContractDateIsNotAvaliableAsync(
                It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(true);
 
-            var handler = new CreatePaymentInfoCommandHandler(_mapper, _employeeRepositoryMock.Object,
+            var handler = new CreatePaymentInfoCommandHandler(_mapperMock.Object, _employeeRepositoryMock.Object,
                 _companyRepositoryMock.Object, _paymentInfoRepositoryMock.Object);
 
             var result = await handler.Handle(command, default);
@@ -90,7 +84,13 @@ namespace Tests.PaymentInfos
             _paymentInfoRepositoryMock.Setup(x => x.ContractDateIsNotAvaliableAsync(
                It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(false);
 
-            var handler = new CreatePaymentInfoCommandHandler(_mapper, _employeeRepositoryMock.Object,
+            _mapperMock.Setup(x => x.Map<EmployeePaymentInfo>(It.IsAny<CreatePaymentInfoCommand>()))
+          .Returns(new EmployeePaymentInfo());
+
+            _mapperMock.Setup(x => x.Map<PaymentInfoResponse>(It.IsAny<EmployeePaymentInfo>()))
+              .Returns(new PaymentInfoResponse());
+
+            var handler = new CreatePaymentInfoCommandHandler(_mapperMock.Object, _employeeRepositoryMock.Object,
                 _companyRepositoryMock.Object, _paymentInfoRepositoryMock.Object);
 
             var result = await handler.Handle(command, default);
@@ -114,7 +114,13 @@ namespace Tests.PaymentInfos
             _paymentInfoRepositoryMock.Setup(x => x.ContractDateIsNotAvaliableAsync(
                It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(false);
 
-            var handler = new CreatePaymentInfoCommandHandler(_mapper, _employeeRepositoryMock.Object,
+            _mapperMock.Setup(x => x.Map<EmployeePaymentInfo>(It.IsAny<CreatePaymentInfoCommand>()))
+                .Returns(new EmployeePaymentInfo());
+
+            _mapperMock.Setup(x => x.Map<PaymentInfoResponse>(It.IsAny<EmployeePaymentInfo>()))
+              .Returns(new PaymentInfoResponse());
+
+            var handler = new CreatePaymentInfoCommandHandler(_mapperMock.Object, _employeeRepositoryMock.Object,
                 _companyRepositoryMock.Object, _paymentInfoRepositoryMock.Object);
 
             var result = await handler.Handle(command, default);
