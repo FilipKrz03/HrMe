@@ -43,7 +43,7 @@ namespace Application.CQRS.Employee.Command.PutEmployee
 
                 if(employeeWithSameMail)
                 {
-                    return response.SetError(400, $"Employ with entered email {request.Email} already exist");
+                    return response.SetError(409, $"Employ with entered email {request.Email} already exist");
                 }
 
                 Domain.Entities.Employee createdEmployee
@@ -66,7 +66,7 @@ namespace Application.CQRS.Employee.Command.PutEmployee
 
             if(employeeWithSameMailExist )
             {
-                return response.SetError(400, $"You want to change email but " +
+                return response.SetError(409, $"You want to change email but " +
                     $"other employee has already this email :  {request.Email}");
             }
 
