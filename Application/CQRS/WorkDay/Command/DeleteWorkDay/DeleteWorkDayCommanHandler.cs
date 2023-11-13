@@ -37,12 +37,14 @@ namespace Application.CQRS.WorkDay.Command.DeleteWorkDay
                 return response.SetError(404, $"We could not find employee with id {request.EmployeeId}");
             }
 
-            var workDay = _workDayReposiotry.GetWorkDayAsync(request.WorkDayId, request.EmployeeId);
+            var workDay = await _workDayReposiotry.GetWorkDayAsync(request.WorkDayId, request.EmployeeId);
 
             if (workDay == null)
             {
                 return response.SetError(404, $"We could not find work day with id {request.WorkDayId}");
             }
+
+            await _workDayReposiotry.DeleteWorkDayAsync(workDay);
 
             response.Value = true;
 
