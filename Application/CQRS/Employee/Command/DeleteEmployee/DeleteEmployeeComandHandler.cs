@@ -25,7 +25,7 @@ namespace Application.CQRS.Employee.Command.DeleteEmployee
 
             if(! await _companyRepository.CompanyExistAsync(request.CompanyId))
             {
-                return response.SetError(404, "We could not find company");
+                return response.SetError(500, "We could not find company");
             }
 
             var employe = await _employeeRepostiory.GetEmployeeAsync(request.EmployeeId , request.CompanyId);
