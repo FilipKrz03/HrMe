@@ -20,9 +20,10 @@ namespace Infrastructure
     {
         public static IServiceCollection AddInfrastucture(this IServiceCollection services, IConfiguration configuration)
         {
+            
             services.AddDbContext<HrMeContext>(dbContextOptions =>
             {
-                var conectionString = configuration["ConnectionStrings:DefaultConnection"];
+                var conectionString = Environment.GetEnvironmentVariable("ConnectionString");
                 dbContextOptions.UseSqlServer(conectionString);
             });
 

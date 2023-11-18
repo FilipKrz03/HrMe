@@ -34,7 +34,7 @@ namespace Infrastructure
                 .Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<HrMeContext>();
-            var conString = _configuration["ConnectionStrings:DefaultConnection"];
+            var conString = Environment.GetEnvironmentVariable("ConnectionString");
 
             optionsBuilder.UseSqlServer(conString);
 
