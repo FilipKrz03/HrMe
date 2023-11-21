@@ -1,0 +1,32 @@
+version: '3.4'
+
+networks:
+  hrmeapplication:
+   
+services:
+
+  hrmeappdb:
+    container_name: "hrme-db"
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+     - 1433:1433
+    environment:
+     - ACCEPT_EULA=Y
+     - SA_PASSWORD=hrmePaassword123@
+    networks:
+     - hrmeapplication
+     
+  web:
+    container_name: "hrme-app"
+    image: ${DOCKER_REGISTRY-}web
+    build:
+      context: .
+      dockerfile: Web/Dockerfile
+    ports:
+     - 8000:80
+    depends_on:
+     - hrmeappdb
+    environment:
+       - ConnectionString=Server=hrmeappdb,1433;Initial Catalog=HrMeDb;User ID = sa;Password=hrmePaassword123@;TrustServerCertificate=true 
+    networks:
+     - hrmeapplication

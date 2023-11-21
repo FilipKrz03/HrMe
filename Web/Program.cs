@@ -1,3 +1,5 @@
+using Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Web;
 
 var builder = WebApplication.CreateBuilder(args);

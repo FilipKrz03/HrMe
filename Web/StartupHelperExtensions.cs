@@ -4,11 +4,14 @@ using Domain.Abstractions;
 using FluentValidation;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 using Web.Services;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Web
 {
@@ -33,7 +36,7 @@ namespace Web
             services.AddHttpContextAccessor();
             services.AddScoped<IUserService , UserService>();
             services.AddSwaggerGen();
-
+         
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                .AddJwtBearer(options =>
                {
@@ -63,7 +66,6 @@ namespace Web
                 app.UseSwaggerUI();
             }
             app.UseHttpsRedirection();
-
 
             app.UseMiddlewareAplication();
 

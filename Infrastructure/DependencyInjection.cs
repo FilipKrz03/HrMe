@@ -24,9 +24,12 @@ namespace Infrastructure
             services.AddDbContext<HrMeContext>(dbContextOptions =>
             {
                 var conectionString = Environment.GetEnvironmentVariable("ConnectionString");
+                Console.WriteLine(conectionString);
                 dbContextOptions.UseSqlServer(conectionString);
+              
             });
 
+     
             services.AddSingleton<IJwtProvider, JwtProvider>();
 
             services.AddScoped<ICompanyRepository, CompanyRepostiory>();
