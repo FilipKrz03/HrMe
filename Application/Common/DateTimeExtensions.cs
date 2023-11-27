@@ -8,7 +8,7 @@ namespace Application.Common
 {
     public static class DateTimeExtensions
     {
-        public static int CalculateAge(DateTime birthDate)
+        public static int CalculateAge(this DateTime birthDate)
         {
             int age = DateTime.Now.Year - birthDate.Year;
 
@@ -25,7 +25,7 @@ namespace Application.Common
             return age;
         }
 
-        public static DateOnly ConvertDateTimeOffSetToDateOnly(DateTime date)
+        public static DateOnly ConvertDateTimeToDateOnly(this DateTime date)
         {
             DateOnly dateOnly = new
                 (date.Year, date.Month, date.Day);

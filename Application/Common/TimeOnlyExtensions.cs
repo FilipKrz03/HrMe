@@ -8,7 +8,7 @@ namespace Application.Common
 {
     public static class TimeOnlyExtensions
     {
-        public static int CalculateMinutesAfterMidnight(TimeOnly time)
+        public static int CalculateMinutesAfterMidnight(this TimeOnly time)
         {
             int minutes = 0;
 

@@ -49,7 +49,7 @@ namespace Infrastructure.Repositories
 
             if (!resourceParameters.OrderBy.IsNullOrEmpty())
             {
-                query = IQueraybleExtensions.ApplySort(query, resourceParameters.OrderBy!, mappings);
+                query = query.ApplySort(resourceParameters.OrderBy!, mappings);
             }
 
             return await PagedList<EmployeeWorkDay>

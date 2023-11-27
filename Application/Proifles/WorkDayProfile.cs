@@ -17,15 +17,15 @@ namespace Application.Proifles
         {
             CreateMap<CreateWorkDayCommand, Domain.Entities.EmployeeWorkDay>()
                 .ForMember(dest => dest.StartTimeInMinutesAfterMidnight,
-                opt => opt.MapFrom(src => TimeOnlyExtensions.CalculateMinutesAfterMidnight(src.StartTime)))
+                opt => opt.MapFrom(src => src.StartTime.CalculateMinutesAfterMidnight()))
                  .ForMember(dest => dest.EndTimeInMinutesAfterMidnight,
-                opt => opt.MapFrom(src => TimeOnlyExtensions.CalculateMinutesAfterMidnight(src.EndTime)));
+                opt => opt.MapFrom(src => src.EndTime.CalculateMinutesAfterMidnight()));
 
             CreateMap<PutWorkDayCommand, Domain.Entities.EmployeeWorkDay>()
                 .ForMember(dest => dest.StartTimeInMinutesAfterMidnight,
-                opt => opt.MapFrom(src => TimeOnlyExtensions.CalculateMinutesAfterMidnight(src.StartTime)))
+                opt => opt.MapFrom(src => src.StartTime.CalculateMinutesAfterMidnight()))
                  .ForMember(dest => dest.EndTimeInMinutesAfterMidnight,
-                opt => opt.MapFrom(src => TimeOnlyExtensions.CalculateMinutesAfterMidnight(src.EndTime)));
+                opt => opt.MapFrom(src => src.EndTime.CalculateMinutesAfterMidnight()));
 
             CreateMap<Domain.Entities.EmployeeWorkDay, WorkDayResponse>()
                 .ForMember(dest => dest.StartTime,
@@ -35,7 +35,7 @@ namespace Application.Proifles
                 opt => opt.MapFrom
                 (src => TimeOnlyExtensions.CalculateTimeFromMinutesAfterMidnight(src.EndTimeInMinutesAfterMidnight)))
                 .ForMember(dest => dest.WorkDayDate,
-                opt => opt.MapFrom(src => DateTimeExtensions.ConvertDateTimeOffSetToDateOnly(src.WorkDayDate)));
+                opt => opt.MapFrom(src => src.WorkDayDate.ConvertDateTimeToDateOnly()));
         }
     }
 }
