@@ -11,12 +11,11 @@ namespace Tests.Common
 {
     public class CommandTestBase : IDisposable
     {
-
-        public Mock<ICompanyRepository> _companyRepositoryMock { get; }
-        public Mock<IEmployeeRepository> _employeeRepositoryMock {  get; }
-        public Mock<IWorkDayReposiotry> _workDayReposiotryMock { get; }
-        public Mock<IPaymentInfoRepository> _paymentInfoRepositoryMock {  get; }
-        public Mock<IMonthlyBonusRepository> _monthlyBonusRepositoryMock {  get; }
+        protected Mock<ICompanyRepository> _companyRepositoryMock { get; }
+        protected Mock<IEmployeeRepository> _employeeRepositoryMock {  get; }
+        protected Mock<IWorkDayReposiotry> _workDayReposiotryMock { get; }
+        protected Mock<IPaymentInfoRepository> _paymentInfoRepositoryMock {  get; }
+        protected Mock<IMonthlyBonusRepository> _monthlyBonusRepositoryMock {  get; }
 
         public CommandTestBase()
         {
