@@ -58,27 +58,5 @@ namespace Application.Services
             }
 
         }
-
-        //public async void SendEmail(string sourceEmail, string subject, string body)
-        //{
-        //    var senderEmail = _configuration["MailSender:Mail"];
-        //    var smtpAdress = _configuration["MailSender:SmtpAdress"];
-        //    var login = _configuration["MailSender:Login"];
-        //    var password = _configuration["MailSender:Password"];
-
-        //    var email = new MimeMessage();
-        //    email.From.Add(MailboxAddress.Parse(senderEmail));
-        //    email.To.Add(MailboxAddress.Parse(sourceEmail));
-        //    email.Subject = subject;
-        //    email.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
-
-        //    using var smtp = new SmtpClient();
-        //    await smtp.ConnectAsync(smtpAdress, 587);
-        //    await smtp.AuthenticateAsync(login, password);
-        //    var c = await smtp.SendAsync(email);
-        //    await smtp.DisconnectAsync(true);
-        //}
-
-
     }
 }
