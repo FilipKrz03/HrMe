@@ -6,9 +6,15 @@ The application follows the principles of clean architecture and utilizes the Me
 
 The program also utilizes Docker and Docker Compose, enabling easy deployment of the environment (including the database and API) and ensuring that the project will run consistently across different machines.
 
+Unit tests have been implemented using the xUnit and Moq libraries.
 
-## Entites
+
+## Entities
 To better undestand program logic i made entites schema 
 
 
 ![Entities](tabels.png)
+
+
+## Tests 
+
